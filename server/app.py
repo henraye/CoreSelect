@@ -1,10 +1,14 @@
 from flask import Flask, jsonify
+from flask_cors import CORS
 from routes.user import user_api
 
 app = Flask(__name__)
 
 # register blueprint (user.py)
 app.register_blueprint(user_api)
+
+#Gives permission for the frontend to call the backend
+CORS(app)
 
 @app.route("/", methods=['GET'])
 def home():

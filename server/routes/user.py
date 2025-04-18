@@ -23,7 +23,7 @@ def get_user_by_id(id):
   return jsonify({"error": "user not found"}), 404
 
 # POST request that uses a request body
-@user_api.route("/users/", methods=["POST"])
+@user_api.route("/user/", methods=["POST"])
 def create_new_user():
   name = request.json['name']
   major = request.json['major']
