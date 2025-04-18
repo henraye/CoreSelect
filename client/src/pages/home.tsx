@@ -20,7 +20,13 @@ function Home() {
     //Lets call the data from the backend by initalizing the function
     const getData = async () => {
       try {
-        const res = await fetch(`${uri}`); //uri is imported from App.tsx
+        const res = await fetch(`${uri}/`, {
+          method: "GET",
+          headers: {
+            "Cache-Control": "no-cache",
+            Pragma: "no-cache",
+          },
+        }); //uri is imported from App.tsx
         const toJson = (await res.json()) as GetRequest; //Convert the raw data to JSON, specifiying the data is to be returned as GetRequest
         setMessage(toJson.message); //Finally, set the message, Because we set the type as GetRequest, we know that toJson will have a .message attribute
       } catch (error) {

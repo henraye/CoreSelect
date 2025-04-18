@@ -8,7 +8,7 @@ app = Flask(__name__)
 app.register_blueprint(user_api)
 
 #Gives permission for the frontend to call the backend
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 @app.route("/", methods=['GET'])
 def home():

@@ -6,7 +6,7 @@ import Users from "./pages/users";
 
 // Here is where the backend is hosted
 // No useState here for the variable because uri never changes. Th
-export const uri = "http://127.0.0.1:5000";
+export const uri = "http://127.0.0.1:8000";
 
 function App() {
   return (

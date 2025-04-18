@@ -18,7 +18,7 @@ function Users() {
   useEffect(() => {
     const getUsers = async () => {
       try {
-        const res = await fetch(`${uri}/users`);
+        const res = await fetch(`${uri}/users/`);
         const users = (await res.json()) as UserModel[];
         setAllUsers(users);
       } catch (error) {
@@ -49,7 +49,7 @@ function Users() {
       if (!res.ok) alert("Failed to create user");
 
       // Refresh the list of users
-      const res2 = await fetch(`${uri}/users`);
+      const res2 = await fetch(`${uri}/users/`);
       const users = (await res2.json()) as UserModel[];
       setAllUsers(users);
 
