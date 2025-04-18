@@ -1,4 +1,4 @@
-\*Note you need to run both the client and server simultaneously
+# Environment for a fullstack web project!
 
 # Running the Frontend (client)
 
