@@ -1,9 +1,0 @@
-name,size,airflow,static_pressure,rgb,price,noise_level
-NF-A12x25,120mm,60.1CFM,2.34mmH2O,No,29.99,22.6dB
-Silent Wings 4,140mm,65.5CFM,2.16mmH2O,No,24.99,21.5dB
-QL120 RGB,120mm,41.8CFM,1.55mmH2O,Yes,39.99,26dB
-P12 PWM,120mm,56.3CFM,2.2mmH2O,No,9.99,24.8dB
-T30,120mm,62.3CFM,3.15mmH2O,No,32.99,27.3dB
-Unifan SL120,120mm,58.54CFM,2.54mmH2O,Yes,25.99,25dB
-NF-P12 redux,120mm,54.32CFM,1.68mmH2O,No,13.99,25.1dB
-ML140 RGB,140mm,55.4CFM,1.27mmH2O,Yes,34.99,27dB 

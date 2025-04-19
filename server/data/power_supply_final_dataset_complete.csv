@@ -1,0 +1,21 @@
+name,price,type,efficiency,wattage,modular,color,rank,rank_score,wattage_range
+ADATA XPG CORE Reactor 650,84.94,ATX,gold,650,Full,Black,Tier A,1,650-750W
+ADATA XPG CORE Reactor 750,89.99,ATX,gold,750,Full,Black,Tier A,1,650-750W
+ADATA XPG CORE Reactor 850,94.99,ATX,gold,850,Full,Black,Tier A,1,800-900W
+ADATA XPG Core Reactor II,99.99,ATX,gold,850,Full,Black,Tier A,1,800-900W
+MSI MPG A850G PCIE5,127.88,ATX,gold,850,Full,Black,Tier A,1,800-900W
+Montech Titan Gold,129.99,ATX,Gold,1000,Fully,Black,Tier A,1,1000W+
+SeaSonic FOCUS GX-1000 ATX 3.0,139.99,ATX,gold,1000,Full,Black,Tier A,1,1000W+
+Montech TITAN GOLD 1200W,140.24,ATX,gold,1200,Full,Black,Tier A,1,1000W+
+Montech TITAN GOLD 1000W,140.24,ATX,gold,1000,Full,Black,Tier A,1,1000W+
+Thermaltake Toughpower Gf3 1000W,166.65,ATX,Gold,1000,Fully,Black,Tier A,1,1000W+
+Montech TITAN GOLD 850W,169.99,ATX,gold,850,Full,Black,Tier A,1,800-900W
+Asus Rog Loki Platinum,183.1,SFX-L,Platinum,850,Fully,Black,Tier A,1,800-900W
+Corsair SF750,184.99,SFX,platinum,750,Full,Black,Tier A,1,650-750W
+Segotep GM,94.99,ATX,gold,750,Full,Black,Tier B,2,650-750W
+Montech CENTURY MINI,98.9,SFX,gold,750,Full,Black,Tier B,2,650-750W
+Deepcool PF600 230V,49.73,ATX,plus,600,false,Black,Tier C,3,500-600W
+Deepcool PF500 230V,49.99,ATX,plus,500,false,Black,Tier C,3,500-600W
+Deepcool PK500D,49.99,ATX,bronze,500,false,Black,Tier C,3,500-600W
+Deepcool PK600D,49.99,ATX,bronze,600,false,Black,Tier C,3,500-600W
+EVGA 500 BR,59.99,ATX,Bronze,500,false,Black,Tier C,3,500-600W

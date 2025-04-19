@@ -1,0 +1,31 @@
+name,price,type,color,psu,side_panel,external_volume,internal_35_bays,GPU_clearance,form_factor
+Corsair 4000D Airflow,105.0,Mid Tower,,,Tempered Glass,,,360.0,Mid Tower
+NZXT H5 Flow,94.99,ATX Mid Tower,Black,,Tempered Glass,47.0,1.0,365.0,Mid Tower
+NZXT H9 Flow,159.99,ATX Mid Tower,White,,Tempered Glass,66.9,2.0,435.0,Mid Tower
+NZXT H9 Flow,154.99,ATX Mid Tower,Black,,Tempered Glass,66.9,2.0,435.0,Mid Tower
+Montech AIR 903 MAX,75.0,Mid Tower,,,Tempered Glass,,,400.0,Mid Tower
+NZXT H6 Flow,109.99,ATX Mid Tower,White,,Tempered Glass,51.8,1.0,365.0,Mid Tower
+Cooler Master MasterBox Q300L,46.98,MicroATX Mini Tower,Black,,Acrylic,33.6,1.0,360.0,Mid Tower
+NZXT H6 Flow,101.29,ATX Mid Tower,Black,,Tempered Glass,51.8,1.0,365.0,Mid Tower
+Montech X3 Mesh,64.98,ATX Mid Tower,Black,,Tempered Glass,,2.0,305.0,Mid Tower
+Lian Li O11 Vision,138.94,ATX Mid Tower,White,,Tempered Glass,67.8,2.0,430.0,Mid Tower
+Silverstone ALTA F2,999.99,ATX Full Tower,Black,,Tempered Glass,98.9,8.0,354.0,Full Tower
+Lian Li O11 Dynamic EVO XL,231.99,ATX Full Tower,Black,,Tempered Glass,84.4,4.0,426.0,Full Tower
+Corsair 7000D AIRFLOW,189.99,ATX Full Tower,Black,,Tempered Glass,81.8,6.0,450.0,Full Tower
+Fractal Design Pop XL Air,109.97,ATX Full Tower,Black,,Tempered Glass,62.4,3.0,455.0,Full Tower
+Lian Li PC-O11 Dynamic,119.99,ATX Full Tower,White,,Tempered Glass,54.0,3.0,420.0,Full Tower
+Lian Li O11 Dynamic EVO XL,229.99,ATX Full Tower,White,,Tempered Glass,84.4,4.0,426.0,Full Tower
+Asus ROG Strix Helios,304.99,ATX Full Tower,Black,,Tempered Glass,83.5,2.0,450.0,Full Tower
+Phanteks Enthoo Pro,99.99,ATX Full Tower,Black,,Acrylic,68.6,6.0,420.0,Full Tower
+Corsair Obsidian Series 1000D,524.99,ATX Full Tower,Black,,Tempered Glass,149.1,5.0,400.0,Full Tower
+Corsair iCUE 7000X RGB,229.99,ATX Full Tower,Black,,Tempered Glass,81.8,6.0,450.0,Full Tower
+Fractal Design Terra,179.97,Mini ITX Desktop,Black / Brown,,Mesh,11.4,0.0,322.0,ITX
+Cooler Master MasterBox NR200,114.99,Mini ITX Desktop,Black,,,,2.0,330.0,ITX
+Fractal Design Terra,179.99,Mini ITX Desktop,Green / Brown,,Mesh,11.4,0.0,322.0,ITX
+Lian Li A4-H20 X4,154.99,Mini ITX Desktop,Black,,Mesh,11.1,0.0,322.0,ITX
+Cooler Master MasterBox NR200P V2,119.99,Mini ITX Desktop,Black,,Mesh,20.1,1.0,330.0,ITX
+Fractal Design Ridge PCIe 4.0,129.99,Mini ITX Tower,Black,,Mesh,16.3,0.0,335.0,ITX
+Fractal Design Terra,179.99,Mini ITX Desktop,Silver / Brown,,Mesh,11.4,0.0,322.0,ITX
+Corsair 2000D AIRFLOW,99.99,Mini ITX Tower,Black,,Mesh,24.8,0.0,365.0,ITX
+Cooler Master MasterBox NR200,93.99,Mini ITX Desktop,White / Black,,,,2.0,330.0,ITX
+Fractal Design Ridge PCIe 4.0,129.99,Mini ITX Tower,White,,Mesh,16.3,0.0,335.0,ITX

@@ -5,6 +5,7 @@
 import pandas as pd
 import os
 from collections import defaultdict
+from pathlib import Path
 
 class CleanCSV:
     budget: float # The budget for the user
@@ -32,6 +33,7 @@ class CleanCSV:
     def __init__(self, budget: float, priority_list: list):
         self.budget = budget
         self.priority_list = priority_list
+        self.data_dir = Path('data')
         self.determine_budget()
     
     def determine_budget(self):
@@ -118,18 +120,24 @@ class CleanCSV:
         print(f"PSU Budget: {self.psu_budget}")
         print(f"Case Budget: {self.case_budget}")
 
+    def load_csv(self, filename):
+        file_path = self.data_dir / filename
+        if not file_path.exists():
+            raise FileNotFoundError(f"CSV file not found: {filename}")
+        return pd.read_csv(file_path)
+
     def clean_cpu(self):
-        df = pd.read_csv(os.path.join('CleanCSV', 'parts', 'cpu_final_dataset_complete.csv'))
+        df = self.load_csv('cpu_final_dataset_complete.csv')
         df = df[df['price'] <= self.cpu_budget].copy()
         return df
 
     def clean_gpu(self):
-        df = pd.read_csv(os.path.join('CleanCSV', 'parts', 'video_card_final_dataset_complete.csv'))
+        df = self.load_csv('video_card_final_dataset_complete.csv')
         df = df[df['price'] <= self.gpu_budget].copy()
         return df
 
     def clean_ram(self, cpu):
-        df = pd.read_csv(os.path.join('CleanCSV', 'parts', 'memory_final_dataset_complete.csv'))
+        df = self.load_csv('memory_final_dataset_complete.csv')
         df = df[df['price'] <= self.ram_budget].copy()
         socket = cpu.get('socket_type', '')
         if socket in ['LGA 1700', 'AM4']:
@@ -139,35 +147,32 @@ class CleanCSV:
         return df
 
     def clean_storage(self):
-        df = pd.read_csv(os.path.join('CleanCSV', 'parts', 'internal_hard_drive_final_dataset_complete.csv'))
+        df = self.load_csv('internal_hard_drive_final_dataset_complete.csv')
         df = df[df['price'] <= self.storage_budget].copy()
         return df
 
     def clean_motherboard(self, cpu):
-        df = pd.read_csv(os.path.join('CleanCSV', 'parts', 'motherboard_final_dataset_complete.csv'))
+        df = self.load_csv('motherboard_final_dataset_complete.csv')
         df = df[df['price'] <= self.motherboard_budget].copy()
         socket = cpu.get('socket_type', '')
         df = df[df['socket'] == socket]
         return df
 
     def clean_case(self, gpu):
-        import os
-        df = pd.read_csv(os.path.join('CleanCSV', 'parts', 'case_final_dataset_complete.csv'))
+        df = self.load_csv('case_final_dataset_complete.csv')
         df = df[df['price'] <= self.case_budget].copy()
-        
         gpu_clearance = gpu.get('length', 0)
         df = df[df['GPU_clearance'] >= gpu_clearance]
         return df
 
     def clean_cpu_cooler(self):
-        df = pd.read_csv(os.path.join('CleanCSV', 'parts', 'cpu_cooler_final_dataset_complete.csv'))
+        df = self.load_csv('cpu_cooler_final_dataset_complete.csv')
         df = df[df['price'] <= self.cpu_cooler_budget].copy()
         return df
 
     def clean_psu(self, gpu, case):
-        df = pd.read_csv(os.path.join('CleanCSV', 'parts', 'power_supply_final_dataset_complete.csv'))
+        df = self.load_csv('power_supply_final_dataset_complete.csv')
         df = df[df['price'] <= self.psu_budget].copy()
-
         wattage_required = gpu.get('recommended_wattage', 500)
         wattage_cutoff = 600 if wattage_required > 600 else 500
         df = df[df['wattage'] >= wattage_cutoff]

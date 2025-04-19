@@ -1,9 +1,0 @@
-name,form_factor,type,included_fans,max_gpu_length,price,features
-4000D Airflow,ATX,Mid Tower,2,360mm,104.99,Mesh Front|USB-C
-H7 Flow,ATX,Mid Tower,3,400mm,129.99,Mesh Front|USB-C|RGB
-Torrent,ATX,Mid Tower,5,461mm,189.99,High Airflow|USB-C
-O11 Dynamic,ATX,Mid Tower,0,420mm,159.99,Glass Panels|USB-C
-P500A,ATX,Mid Tower,3,450mm,149.99,Mesh Front|USB-C|RGB
-Meshify 2,ATX,Mid Tower,3,467mm,169.99,Mesh Front|USB-C|Modular
-P300A,ATX,Mid Tower,1,355mm,69.99,Mesh Front
-H510 Flow,ATX,Mid Tower,2,360mm,89.99,Mesh Front|USB-C 

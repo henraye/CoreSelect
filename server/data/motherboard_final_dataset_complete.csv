@@ -1,0 +1,25 @@
+name,price,socket,form_factor,max_memory,memory_slots,color,chipset,rgb_headers,debug_led,fan_headers,supported_cpus,pcie_slots,pcie_version,m2_slots,sata_ports,wifi_version,bluetooth,ethernet_speed,ethernet_ports,usb_a_ports,usb_c_ports,usb_versions,rear_io_shield,memory_type,memory_speed_support
+ASRock B450M-HDV R4.0,59.99,AM4,Micro ATX,32.0,2.0,Black / White,,1,No,3,AMD Ryzen 1000–5000 Series,2,PCIe 4.0,1,4,,,1GbE,1,5,1,"USB 3.2 Gen 1, USB 2.0",Integrated,DDR4,3600 MHz
+ASRock A520M-HDV,66.98,AM4,Micro ATX,64.0,2.0,Black / Silver,,1,No,3,AMD Ryzen 1000–5000 Series,2,PCIe 4.0,1,4,,,1GbE,1,5,1,"USB 3.2 Gen 1, USB 2.0",Integrated,DDR4,3600 MHz
+ASRock X370 Pro4,110.73,AM4,ATX,64.0,4.0,Black / White,X370,1,No,4,AMD Ryzen 1000–5000 Series,2,PCIe 4.0,1,4,,,2.5GbE,1,5,1,"USB 3.2 Gen 1, USB 2.0",Integrated,DDR4,3600 MHz
+Asus PRIME B550M-K,114.97,AM4,Micro ATX,128.0,4.0,Black / White,,1,No,3,AMD Ryzen 1000–5000 Series,2,PCIe 4.0,1,4,,,1GbE,1,5,1,"USB 3.2 Gen 1, USB 2.0",Integrated,DDR4,3600 MHz
+Gigabyte B550 AORUS ELITE V2,173.32,AM4,ATX,128.0,4.0,Black,B550,2,No,4,AMD Ryzen 1000–5000 Series,2,PCIe 4.0,1,4,,,1GbE,1,6,1,"USB 3.2 Gen 2, Gen 1",Integrated,DDR4,4800 MHz
+Asus PRIME B450M-A/CSM,188.0,AM4,Micro ATX,64.0,4.0,Black / Silver,,1,No,3,AMD Ryzen 1000–5000 Series,2,PCIe 4.0,1,4,,,1GbE,1,5,1,"USB 3.2 Gen 1, USB 2.0",Integrated,DDR4,3600 MHz
+MSI PRO A620M-E,74.95,AM5,Micro ATX,96.0,2.0,Black,,1,No,4,"AMD Ryzen 7000 Series, Ryzen 8000 Series",2,PCIe 4.0,1,4,,,2.5GbE,1,5,1,"USB 3.2 Gen 1, USB 2.0",Integrated,DDR5,8000 MHz
+Gigabyte A620M S2H,89.99,AM5,Micro ATX,96.0,2.0,Gray / Black,,1,No,3,"AMD Ryzen 7000 Series, Ryzen 8000 Series",2,PCIe 4.0,1,4,,,1GbE,1,5,1,"USB 3.2 Gen 1, USB 2.0",Integrated,DDR5,8000 MHz
+Gigabyte B650M S2H,184.79,AM5,Micro ATX,96.0,2.0,Black / Gray,,1,No,3,"AMD Ryzen 7000 Series, Ryzen 8000 Series",2,PCIe 4.0,1,4,,,1GbE,1,5,1,"USB 3.2 Gen 1, USB 2.0",Integrated,DDR5,8000 MHz
+Gigabyte B650 GAMING X AX V2,184.99,AM5,ATX,192.0,4.0,Gray / Black,B650,1,No,3,"AMD Ryzen 7000 Series, Ryzen 8000 Series",2,PCIe 5.0,1,4,,,1GbE,1,5,1,"USB 3.2 Gen 1, USB 2.0",Integrated,DDR5,7200 MHz
+Asus TUF GAMING B650-PLUS,260.54,AM5,ATX,128.0,4.0,Black / Orange,B650,1,No,3,"AMD Ryzen 7000 Series, Ryzen 8000 Series",2,PCIe 5.0,1,4,,,1GbE,1,5,1,"USB 3.2 Gen 1, USB 2.0",Integrated,DDR5,7200 MHz
+MSI MPG B650I EDGE WIFI,261.33,AM5,Mini ITX,96.0,2.0,Black / Silver,,1,No,3,"AMD Ryzen 7000 Series, Ryzen 8000 Series",1,PCIe 4.0,1,2,WiFi 7,Bluetooth 5.4,1GbE,1,4,1,"USB 3.2 Gen 1, USB 2.0",Integrated,DDR5,8000 MHz
+ASRock H610M-HVS,69.98,LGA1700,Micro ATX,64.0,2.0,Gray / Black,,1,No,3,"Intel 12th, 13th, and 14th Gen Core",2,PCIe 4.0,1,4,,,1GbE,1,5,1,"USB 3.2 Gen 1, USB 2.0",Integrated,DDR4,3600 MHz
+MSI PRO H610M-G DDR4,79.99,LGA1700,Micro ATX,64.0,2.0,Black / Silver,,1,No,4,"Intel 12th, 13th, and 14th Gen Core",2,PCIe 4.0,1,4,,,2.5GbE,1,5,1,"USB 3.2 Gen 1, USB 2.0",Integrated,DDR4,3600 MHz
+Gigabyte B660 GAMING X AX DDR4,174.63,LGA1700,ATX,128.0,4.0,Black,B660,1,No,3,"Intel 12th, 13th, and 14th Gen Core",2,PCIe 4.0,1,4,,,1GbE,1,5,1,"USB 3.2 Gen 1, USB 2.0",Integrated,DDR4,3600 MHz
+Gigabyte B760M AORUS ELITE AX,174.99,LGA1700,Micro ATX,192.0,4.0,Black / Silver,,2,No,4,"Intel 12th, 13th, and 14th Gen Core",2,PCIe 4.0,1,4,,,1GbE,1,6,1,"USB 3.2 Gen 2, Gen 1",Integrated,DDR4,3600 MHz
+NZXT N5 Z690,239.99,LGA1700,ATX,128.0,4.0,Black,Z690,1,No,3,"Intel 12th, 13th, and 14th Gen Core",2,PCIe 5.0,1,4,,,1GbE,1,5,1,"USB 3.2 Gen 1, USB 2.0",Integrated,DDR4,4800 MHz
+ASRock Z790 Steel Legend,239.99,LGA1700,ATX,128.0,4.0,Black,Z790,1,No,4,"Intel 12th, 13th, and 14th Gen Core",2,PCIe 5.0,2,4,,,2.5GbE,1,5,1,"USB 3.2 Gen 1, USB 2.0",Integrated,DDR4 or DDR5,7200 MHz
+MSI MAG Z890 Tomahawk WiFi,299.99,LGA1851,ATX,192.0,4.0,Black,Z890,1,No,4,Intel 15th Gen Arrow Lake,2,PCIe 5.0,3,4,WiFi 7,Bluetooth 5.4,2.5GbE,1,6,1,"USB 3.2 Gen 2x2, Gen 2, Gen 1",Integrated,DDR5,8000 MHz
+ASUS ROG Maximus Z890 Hero,549.99,LGA1851,ATX,192.0,4.0,Black,Z890,3,Yes,6,Intel 15th Gen Arrow Lake,4,PCIe 5.0,4,6,WiFi 7,Bluetooth 5.4,10GbE,2,8,2,"USB 3.2 Gen 2x2, Gen 2, Gen 1",Integrated,DDR5,8000 MHz
+Gigabyte Z890 AORUS Master,1299.9,LGA1851,ATX,192.0,4.0,Black,Z890,2,No,4,Intel 15th Gen Arrow Lake,3,PCIe 5.0,3,4,WiFi 7,Bluetooth 5.4,5GbE,1,6,1,"USB 3.2 Gen 2x2, Gen 2, Gen 1",Integrated,DDR5,8000 MHz
+Gigabyte TRX40 AORUS PRO WIFI,529.99,sTRX4,ATX,256.0,8.0,Black / Orange,,2,No,4,Unknown,2,PCIe 4.0,1,4,WiFi 5,Bluetooth 5.0,2.5GbE,1,6,1,"USB 3.2 Gen 2, Gen 1",Integrated,DDR4,3600 MHz
+Gigabyte TRX40 AORUS MASTER,703.51,sTRX4,EATX,256.0,8.0,Black / Silver,,2,No,4,Unknown,3,PCIe 4.0,1,4,,,5GbE,1,6,1,"USB 3.2 Gen 2, Gen 1",Integrated,DDR4,3600 MHz
+Gigabyte TRX40 AORUS XTREME,1840.02,sTRX4,XL ATX,256.0,8.0,Black / Silver,,2,No,4,Unknown,2,PCIe 4.0,1,4,,,10GbE,2,6,1,"USB 3.2 Gen 2, Gen 1",Integrated,DDR4,3600 MHz
