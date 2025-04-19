@@ -1,49 +1,68 @@
-# Environment for a fullstack web project!
+<a name="readme-top"></a>
 
-# Running the Frontend (client)
+<div align="center">
+  <h1 align="center">CoreSelect</h1>
+  <a href="https://react.dev/"><img src="https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB"/></a>
+  <a href="https://www.typescriptlang.org/"><img src="https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white"/></a>
+  <a href="https://nodejs.org/en"><img src="https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white"></a>
+  <a href="https://www.npmjs.com/"><img src="https://img.shields.io/badge/NPM-%23CB3837.svg?style=for-the-badge&logo=npm&logoColor=white"></a>
+  <a href="https://vitejs.dev/"><img src="https://img.shields.io/badge/vite-%23646CFF.svg?style=for-the-badge&logo=vite&logoColor=white"></a>
+</div>
 
-## Required downloads
+# About
 
-Beforehand, make sure to download nodejs https://nodejs.org/en/download
+A comprehensive way to find parts for your new PC powered with AI decisions!
 
-I recommend version 20.16 (LTS).
+<div align="center">
+  <img src="https://imgur.com/Y37gJlH.png" align="center" alt="Display Sample 1" width="720"/></div><br>
+  <img src="https://imgur.com/GKV3hJ0.png" align="center" alt="Display Sample 2" width="720"/></div><br>
+</div>
 
-Once installed, you can do the following:
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-## Downloading and running the project
+# Setup / Installation
 
-go to the client directory and run the following commands in the terminal of your IDE (probably vscode):
+1. Install [Node.js](https://nodejs.org/en/download) <br>
+Note: NPM should install with Node.js
 
-- npm i
+2. Install [Python] https://www.python.org/downloads/ <br>
+Note: Python version used to setup environment is 3.12.0
+3. Open the project root directory within the command line
 
-npm i is used to install all dependencies locally into your computer into a folder called node_modules
+## Running the Frontend (client)
+### Required downloads
 
-- npm run dev
+4. While inside the project root directory, go into the client directory 
 
-runs the app
+5. While inside the client directory, install all the required dependecies with `npm i`
 
-The client should be running on http://localhost:5173/
+6. Launch the app on your localhost with `npm run dev`
+- The client should be running on http://localhost:5173/ <br/>
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <hr/>
 
-# Running the Backend (server)
+## Running the Backend (server)
+### Required downloads
 
-## Required downloads
+7. While inside the project root directory, go into the server directory
 
-Beforehand, make sure to download python: https://www.python.org/downloads/
+8. While inside the server directory, install all the required dependecies with `pip3 install -r requirements.txt`
+- This will install all of the libraries needed to run flask
 
-The python version used to setup this environment was 3.12.0
+9. Launch the server on your localhost with `flask run -p 8000`
+- The server should be running on http://127.0.0.1:8000/ <br/>
 
-Once python is installed, you can head on to your IDE and do the following
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-## Downloading and running the project
+# Contributions
 
-go into the server directory and run
-- pip3 install -r requirements.txt
+This project was created by:
+- [Ethan Jacinto](https://github.com/ekjacinto)
+- [Carter Phung](https://github.com/PenguGH)
+- [Henry Tran](https://github.com/Hraye)
+- [Ryan Wei](https://github.com/HoverfishOTS)
 
-this installs all of the libraries needed to run flask.
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-After that, all thats left to do is run
-- flask run -p 8000
-
-You can see if its working by going to the url http://127.0.0.1:8000/
