@@ -57,28 +57,35 @@ export default function Priorities() {
   const handleNext = () => {
     if (priorities.length > 0) {
       markStepCompleted(2);
-      navigate('/review');
+      // Check if Gaming Performance is in top 3
+      if (priorities.slice(0, 3).includes("Gaming Performance")) {
+        navigate('/game-preferences');
+      } else {
+        navigate('/review');
+      }
     }
   };
 
   return (
-    <div className="space-y-6">
-      <h2 className="text-2xl font-bold">Select Your Priorities</h2>
-      <p className="text-gray-600">Drag and drop up to {MAX_PRIORITIES} priorities in order of importance</p>
-      
-      {/* Word Bank */}
-      <div className="space-y-2">
-        <h3 className="text-lg font-semibold">Available Priorities</h3>
-        <div className="flex flex-wrap gap-2 p-4 bg-gray-50 rounded-lg min-h-[100px]">
+    <div className="space-y-8">
+      <div>
+        <h2 className="text-3xl font-bold mb-3">Select Your Priorities</h2>
+        <p className="text-gray-600 text-lg mb-8">Drag and drop up to 3 priorities in order of importance</p>
+      </div>
+
+      {/* Available Priorities */}
+      <div className="space-y-4">
+        <h3 className="text-2xl font-bold">Available Priorities</h3>
+        <div className="flex flex-wrap gap-3 pb-2">
           {wordBank.map((priority) => (
             <div
               key={priority}
               draggable={priorities.length < MAX_PRIORITIES}
               onDragStart={(e) => handleDragStart(e, priority)}
               className={`
-                px-3 py-2 bg-white border rounded-lg
+                px-6 py-3 rounded-lg border-2 border-gray-300 bg-white
                 ${priorities.length < MAX_PRIORITIES 
-                  ? 'cursor-move hover:bg-gray-100' 
+                  ? 'cursor-grab hover:border-blue-500 hover:shadow-md transition-all'
                   : 'opacity-50 cursor-not-allowed'}
               `}
             >
@@ -88,8 +95,8 @@ export default function Priorities() {
         </div>
       </div>
 
-      {/* Drop Zone */}
-      <div className="space-y-2">
+      {/* Selected Priorities */}
+      <div className="space-y-4">
         <div className="flex justify-between items-center">
           <h3 className="text-lg font-semibold">Your Priorities (in order)</h3>
           <span className="text-sm text-gray-500">
@@ -100,7 +107,7 @@ export default function Priorities() {
           onDrop={handleDrop}
           onDragOver={handleDragOver}
           className={`
-            p-4 rounded-lg min-h-[200px] space-y-2 transition-all duration-200
+            p-6 rounded-lg min-h-[200px] space-y-3 transition-all duration-200
             ${priorities.length < MAX_PRIORITIES 
               ? 'bg-gray-50 border-2 border-dashed border-gray-300' 
               : 'bg-gray-100 border-2 border-gray-200'}
@@ -109,23 +116,23 @@ export default function Priorities() {
           {priorities.map((priority, index) => (
             <div
               key={priority}
-              className="flex items-center gap-2 p-2 bg-white border rounded-lg"
+              className="flex items-center gap-3 p-3 bg-white border rounded-lg shadow-sm"
             >
-              <span className="text-gray-500">{index + 1}.</span>
+              <span className="text-gray-500 font-medium">{index + 1}.</span>
               <span className="flex-1">{priority}</span>
               <button
                 onClick={() => removePriority(priority)}
-                className="p-1 text-gray-500 hover:text-red-500"
+                className="p-1 text-gray-500 hover:text-red-500 transition-colors"
               >
                 ×
               </button>
             </div>
           ))}
           {priorities.length === 0 && (
-            <p className="text-gray-400 text-center">Drag priorities here</p>
+            <p className="text-gray-400 text-center py-4">Drag priorities here</p>
           )}
           {priorities.length >= MAX_PRIORITIES && (
-            <p className="text-orange-500 text-center font-medium">
+            <p className="text-orange-500 text-center font-medium py-2">
               Maximum priorities reached. Remove one to add another.
             </p>
           )}
@@ -135,7 +142,7 @@ export default function Priorities() {
       <button
         onClick={handleNext}
         disabled={priorities.length === 0}
-        className="px-4 py-2 bg-blue-500 text-white rounded-lg disabled:opacity-50"
+        className="w-full mt-6 px-6 py-3 bg-blue-500 text-white rounded-lg disabled:opacity-50 hover:bg-blue-600 transition-colors"
       >
         Next
       </button>
