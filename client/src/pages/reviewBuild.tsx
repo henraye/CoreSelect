@@ -25,6 +25,8 @@ export default function ReviewBuild() {
     priorities,
     wantToPlayGames,
     currentlyPlayingGames,
+    setRecommendation,
+    markStepCompleted,
   } = usePCStore();
 
   const handleGetRecommendation = async () => {
@@ -49,6 +51,9 @@ export default function ReviewBuild() {
         throw new Error('Failed to get recommendation');
       }
 
+      const data = await response.json() as PCRecommendation;
+      setRecommendation(data);
+      markStepCompleted(4);
       navigate('/results');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
