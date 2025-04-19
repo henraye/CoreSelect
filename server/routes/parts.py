@@ -78,7 +78,13 @@ Games they currently play:
 Available PC Parts:
 {parts_context}
 
-Please recommend ONE specific part from each category that best matches the user's requirements while staying within their budget. Ensure compatibility between all parts. Format your response as a JSON object with the following structure:
+IMPORTANT RULES:
+1. CPU and motherboard must be compatible (same socket type). For AMD CPUs, the socket must match to motherboard sockets, specifically AM4 or AM5. For Intel CPUs, the socket must match to motherboard sockets, specifically LGA 1200 or LGA 1700.
+2. RAM must match the motherboard's memory type (DDR4 or DDR5).
+3. Keep the explanation simple and beginner-friendly.
+4. Focus on explaining why each part is good for the user's needs.
+
+Please recommend ONE specific part from each category that best matches the user's requirements while staying within their budget. Format your response as a JSON object with the following structure:
 {{
     "motherboard": "exact name from list",
     "cpu": "exact name from list",
@@ -90,7 +96,7 @@ Please recommend ONE specific part from each category that best matches the user
     "case_fans": "exact name from list",
     "psu": "exact name from list",
     "total_cost": total cost,
-    "explanation": "Brief explanation of why these parts were chosen based on the user's priorities and gaming preferences"
+    "explanation": "Simple, beginner-friendly explanation of why these parts were chosen. Focus on what each part does and why it's good for their needs. Avoid technical jargon."
 }}"""
 
         # Get recommendation from OpenAI
@@ -98,7 +104,13 @@ Please recommend ONE specific part from each category that best matches the user
         response = openai.chat.completions.create(
             model="gpt-4",
             messages=[
-                {"role": "system", "content": "You are a PC building expert. You must respond with ONLY a valid JSON object containing the recommended parts. The JSON must include: motherboard, cpu, memory, storage, gpu, case, cpu_cooler, case_fans, psu, total_cost, and explanation fields. Do not include any other text outside the JSON object."},
+                {"role": "system", "content": """You are a PC building expert who explains things simply. 
+                You must:
+                1. Ensure CPU and motherboard socket compatibility
+                2. Match RAM type (DDR4/DDR5) with motherboard
+                3. Keep explanations simple and beginner-friendly
+                4. Focus on what each part does and why it's good for the user
+                Respond with ONLY a valid JSON object containing the recommended parts."""},
                 {"role": "user", "content": prompt}
             ]
         )

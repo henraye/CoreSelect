@@ -29,6 +29,8 @@ export default function ReviewBuild() {
     markStepCompleted,
   } = usePCStore();
 
+  const isGamingPriority = priorities.includes("Gaming Performance");
+
   const handleGetRecommendation = async () => {
     setLoading(true);
     setError('');
@@ -81,28 +83,30 @@ export default function ReviewBuild() {
           </ol>
         </div>
 
-        <div>
-          <h2 className="text-xl font-semibold mb-2">Gaming Preferences</h2>
-          <div className="space-y-4">
-            <div>
-              <h3 className="text-lg font-medium mb-1">Games You Want to Play</h3>
-              <ol className="list-decimal list-inside space-y-1">
-                {wantToPlayGames.map((game, index) => (
-                  <li key={index}>{game}</li>
-                ))}
-              </ol>
-            </div>
+        {isGamingPriority && (
+          <div>
+            <h2 className="text-xl font-semibold mb-2">Gaming Preferences</h2>
+            <div className="space-y-4">
+              <div>
+                <h3 className="text-lg font-medium mb-1">Games You Want to Play</h3>
+                <ol className="list-decimal list-inside space-y-1">
+                  {wantToPlayGames.map((game, index) => (
+                    <li key={index}>{game}</li>
+                  ))}
+                </ol>
+              </div>
 
-            <div>
-              <h3 className="text-lg font-medium mb-1">Games You Currently Play</h3>
-              <ol className="list-decimal list-inside space-y-1">
-                {currentlyPlayingGames.map((game, index) => (
-                  <li key={index}>{game}</li>
-                ))}
-              </ol>
+              <div>
+                <h3 className="text-lg font-medium mb-1">Games You Currently Play</h3>
+                <ol className="list-decimal list-inside space-y-1">
+                  {currentlyPlayingGames.map((game, index) => (
+                    <li key={index}>{game}</li>
+                  ))}
+                </ol>
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
 
       {error && (
