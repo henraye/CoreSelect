@@ -15,7 +15,7 @@ interface RecommendationResponse {
 }
 
 export default function PCRecommendation() {
-  const { recommendation } = usePCStore();
+  const { recommendation } = usePCStore() as { recommendation: RecommendationResponse | null };
 
   if (!recommendation) {
     return (
