@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { usePCStore } from "../store";
+import { motion } from "framer-motion";
+
 
 export default function Home() {
   const navigate = useNavigate();

@@ -275,7 +275,7 @@ def get_recommendation():
         print("Chosen Storage:", chosen_storage)
 
         # Calculate total cost
-        total_cost = sum([
+        total_cost = round(sum([
             chosen_cpu['price'],
             chosen_mb['price'],
             chosen_ram['price'],
@@ -284,8 +284,7 @@ def get_recommendation():
             chosen_psu['price'],
             chosen_cooler['price'],
             chosen_storage['price']
-        ])
-
+        ]), 2)
         # Create final recommendation
         recommendation = {
             "motherboard": chosen_mb['name'],
