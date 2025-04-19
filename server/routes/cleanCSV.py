@@ -6,6 +6,12 @@ import pandas as pd
 import os
 from collections import defaultdict
 from pathlib import Path
+import openai
+from dotenv import load_dotenv
+import json
+
+load_dotenv()
+openai.api_key = os.getenv('OPENAI_API_KEY')
 
 class CleanCSV:
     budget: float # The budget for the user
@@ -36,8 +42,8 @@ class CleanCSV:
         self.data_dir = Path('data')
         self.determine_budget()
     
-    def determine_budget(self):
-        use_case_weights = {
+    def get_use_case_weights(self):
+        return {
             "Gaming Performance": {"GPU": 0.5, "CPU": 0.3, "RAM": 0.1, "Motherboard": 0.1},
             "Video Editing": {"CPU": 0.35, "GPU": 0.35, "RAM": 0.15, "Storage": 0.15},
             "3D Rendering": {"CPU": 0.4, "GPU": 0.4, "RAM": 0.1, "Cooler": 0.1},
@@ -48,16 +54,44 @@ class CleanCSV:
             "Machine Learning": {"GPU": 0.5, "CPU": 0.3, "RAM": 0.2}
         }
 
-        fixed_minimums = {
-            "CPU": 120,
-            "GPU": 200,
-            "RAM": 80,
-            "Storage": 90,
-            "Motherboard": 100,
-            "Cooler": 50,
-            "PSU": 150,
-            "Case": 80
-        }
+    
+    def determine_budget(self):
+        use_case_weights = self.get_use_case_weights()
+
+        # Define budget tiers and their corresponding minimum allocations
+        if self.budget >= 3000:  # High-end build
+            fixed_minimums = {
+                "CPU": 500,    # Allow for high-end CPUs
+                "GPU": 1200,   # Allow for RTX 4090/4080 tier
+                "RAM": 200,    # Allow for 32/64GB DDR5
+                "Storage": 200, # Allow for large NVMe drives
+                "Motherboard": 300, # High-end motherboards
+                "Cooler": 150,  # Allow for premium cooling
+                "PSU": 200,    # Allow for 1000W+ PSUs
+                "Case": 150    # Allow for premium cases
+            }
+        elif self.budget >= 1500:  # Mid-range build
+            fixed_minimums = {
+                "CPU": 300,
+                "GPU": 600,
+                "RAM": 150,
+                "Storage": 150,
+                "Motherboard": 200,
+                "Cooler": 100,
+                "PSU": 150,
+                "Case": 100
+            }
+        else:  # Budget build
+            fixed_minimums = {
+                "CPU": 120,
+                "GPU": 200,
+                "RAM": 80,
+                "Storage": 90,
+                "Motherboard": 100,
+                "Cooler": 50,
+                "PSU": 150,
+                "Case": 80
+            }
 
         weightings = [0.5, 0.3, 0.2]
         dynamic_weights = defaultdict(float)
@@ -68,6 +102,18 @@ class CleanCSV:
                     dynamic_weights[part] += weight * weightings[idx]
 
         # Normalize dynamic weights
+        total_weight = sum(dynamic_weights.values())
+        for part in dynamic_weights:
+            dynamic_weights[part] /= total_weight
+
+        # Initial dynamic allocation with minimum percentages for high budgets
+        if self.budget >= 3000:
+            # Ensure GPU gets at least 35% of total budget for high-end builds
+            dynamic_weights["GPU"] = max(dynamic_weights.get("GPU", 0), 0.35)
+            # Ensure CPU gets at least 20% of total budget for high-end builds
+            dynamic_weights["CPU"] = max(dynamic_weights.get("CPU", 0), 0.20)
+
+        # Recalculate total weight after adjustments
         total_weight = sum(dynamic_weights.values())
         for part in dynamic_weights:
             dynamic_weights[part] /= total_weight

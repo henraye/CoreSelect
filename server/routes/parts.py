@@ -5,7 +5,6 @@ from dotenv import load_dotenv
 import pandas as pd
 from pathlib import Path
 import json
-from .cleanCSV import CleanCSV as cc
 
 load_dotenv()
 openai.api_key = os.getenv('OPENAI_API_KEY')
@@ -17,39 +16,38 @@ def parse_openai_response(response):
         content = response.choices[0].message.content.strip()
         # Remove any markdown code block markers if present
         content = content.replace('```json', '').replace('```', '').strip()
+        # Print the content for debugging
+        print("Raw OpenAI response:", content)
         return json.loads(content)
     except json.JSONDecodeError as e:
         print(f"Error parsing OpenAI response: {e}")
-        print(f"Raw response: {content}")
+        print(f"Raw response content: {content}")
         raise
 
-def load_parts_data():
+def load_component_data():
     data_dir = Path('data')
-    parts_data = {}
+    components = {}
     
-    # List of part types and their corresponding CSV files
-    part_files = {
-        'motherboards': 'motherboards.csv',
-        'cpus': 'cpus.csv',
-        'memory': 'memory.csv',
-        'storage': 'storage.csv',
-        'gpus': 'gpus.csv',
-        'cases': 'cases.csv',
-        'cpu_coolers': 'cpu_coolers.csv',
-        'case_fans': 'case_fans.csv',
-        'psus': 'psus.csv'
+    files = {
+        'cpu': 'cpu_final_dataset_complete.csv',
+        'gpu': 'video_card_final_dataset_complete.csv',
+        'ram': 'memory_final_dataset_complete.csv',
+        'storage': 'internal_hard_drive_final_dataset_complete.csv',
+        'motherboard': 'motherboard_final_dataset_complete.csv',
+        'case': 'case_final_dataset_complete.csv',
+        'cpu_cooler': 'cpu_cooler_final_dataset_complete.csv',
+        'psu': 'power_supply_final_dataset_complete.csv'
     }
     
-    # Load each CSV file into the parts_data dictionary
-    for part_type, filename in part_files.items():
+    for component, filename in files.items():
         file_path = data_dir / filename
         if file_path.exists():
-            parts_data[part_type] = pd.read_csv(file_path).to_dict('records')
+            components[component] = pd.read_csv(file_path)
         else:
-            print(f"Warning: {filename} not found in data directory")
-            parts_data[part_type] = []
+            print(f"Warning: {filename} not found")
+            components[component] = pd.DataFrame()
             
-    return parts_data
+    return components
 
 @parts_api.route('/recommend', methods=['POST'])
 def get_recommendation():
@@ -57,259 +55,160 @@ def get_recommendation():
         data = request.get_json()
         budget = data.get('budget')
         priorities = data.get('priorities', [])
-
-        #openai makes a decision after each part clean up(have openai pick/make decisions)
-        cleaner = cc(budget, priorities)
         
-        # Process CPU
-        cpu_df = cleaner.clean_cpu()
-        cpu_prompt = f"""Given the following CPU options and user requirements, select the best CPU:
-        Budget: ${budget}
-        Priorities: {', '.join(priorities)}
+        # Load all component data
+        components = load_component_data()
+        
+        # System prompt for the AI
+        system_prompt = """You are an expert PC builder with deep knowledge of computer hardware.
+        Your task is to create the optimal PC build based on the user's budget and requirements.
+        
+        Key guidelines:
+        1. For high budgets (>$3000):
+           - Choose the latest generation flagship CPU
+           - Select the highest-tier current generation GPU
+           - Use high-speed DDR5 RAM, minimum 32GB
+           - Select premium cooling solutions
+           
+        2. For mid-range budgets ($1500-$3000):
+           - Focus on balanced performance
+           - Select current or previous generation high-performance parts
+           - Ensure good CPU-GPU balance
+           
+        3. For budget builds (<$1500):
+           - Maximize price-to-performance
+           - Focus on essential components
+           - Consider previous generation parts for better value
+           
+        4. Always ensure:
+           - Components are compatible (CPU socket matches motherboard, etc.)
+           - PSU has adequate wattage (add 200W buffer)
+           - Case fits all components (check GPU length)
+           - Cooling is appropriate for CPU TDP
+           - Storage matches use case requirements"""
+
+        # Main selection prompt
+        selection_prompt = f"""Create the best possible PC build for a budget of ${budget}.
+        User priorities: {', '.join(priorities)}
         Games to play: {', '.join(data.get('wantToPlayGames', []))}
         Current games: {', '.join(data.get('currentlyPlayingGames', []))}
 
-        Available CPUs:
-        {cpu_df.to_string()}
+        Available components:
 
-        Select the best CPU and explain why it's the best choice for the user's needs. Return a JSON object with the following structure:
+        CPUs:
+        {components['cpu'].to_string()}
+
+        GPUs:
+        {components['gpu'].to_string()}
+
+        Motherboards:
+        {components['motherboard'].to_string()}
+
+        RAM:
+        {components['ram'].to_string()}
+
+        Storage:
+        {components['storage'].to_string()}
+
+        Cases:
+        {components['case'].to_string()}
+
+        CPU Coolers:
+        {components['cpu_cooler'].to_string()}
+
+        Power Supplies:
+        {components['psu'].to_string()}
+
+        This is a {'high-end' if budget >= 3000 else 'mid-range' if budget >= 1500 else 'budget'} build.
+        
+        For high-end builds:
+        - Select the highest-tier current generation GPU available
+        - Choose a matching high-performance CPU
+        - Use high-speed DDR5 RAM, 32GB minimum
+        - Include premium cooling solution
+        - Select high-wattage PSU (1000W+)
+        
+        IMPORTANT: You must return a valid JSON object with EXACT keys and structure as shown below.
+        Do not include any additional text or explanation outside the JSON object.
+        The response must be a single JSON object that can be parsed by json.loads().
+        
+        Required JSON structure:
         {{
-            "name": "exact CPU name",
-            "price": price,
-            "explanation": "brief explanation of why this CPU is best for the user"
+            "cpu": {{
+                "name": "exact name from the CPU list",
+                "price": numeric_price_value,
+                "socket": "exact socket type"
+            }},
+            "gpu": {{
+                "name": "exact name from the GPU list",
+                "price": numeric_price_value
+            }},
+            "motherboard": {{
+                "name": "exact name from the motherboard list",
+                "price": numeric_price_value
+            }},
+            "ram": {{
+                "name": "exact name from the RAM list",
+                "price": numeric_price_value
+            }},
+            "storage": {{
+                "name": "exact name from the storage list",
+                "price": numeric_price_value
+            }},
+            "case": {{
+                "name": "exact name from the case list",
+                "price": numeric_price_value
+            }},
+            "cpu_cooler": {{
+                "name": "exact name from the CPU cooler list",
+                "price": numeric_price_value
+            }},
+            "psu": {{
+                "name": "exact name from the PSU list",
+                "price": numeric_price_value
+            }},
+            "explanation": "Detailed explanation of component choices and their synergy"
         }}"""
-        cpu_response = openai.chat.completions.create(
-            model="gpt-4o-mini",
+
+        # Get AI recommendation
+        response = openai.chat.completions.create(
+            model="gpt-4-turbo-preview",
             messages=[
-                {"role": "system", "content": "You are a PC building expert. Select the best CPU based on the user's needs and budget. Return only valid JSON."},
-                {"role": "user", "content": cpu_prompt}
-            ]
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": selection_prompt}
+            ],
+            temperature=0.2,  # Lower temperature for more consistent formatting
+            max_tokens=2000,
+            response_format={"type": "json_object"}  # Force JSON response
         )
-        chosen_cpu = parse_openai_response(cpu_response)
-        print("Chosen CPU:", chosen_cpu)
-
-        # Process Motherboard
-        mb_df = cleaner.clean_motherboard(chosen_cpu)
-        mb_prompt = f"""Given the following motherboard options and the selected CPU, select the best motherboard:
-        Selected CPU: {chosen_cpu['name']}
-        Budget: ${budget}
-        Priorities: {', '.join(priorities)}
-
-        Available Motherboards:
-        {mb_df.to_string()}
-
-        Select the best motherboard and explain why it's the best choice for the user's needs. Return a JSON object with the following structure:
-        {{
-            "name": "exact motherboard name",
-            "price": price,
-            "explanation": "brief explanation of why this motherboard is best for the user"
-        }}"""
-        mb_response = openai.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[
-                {"role": "system", "content": "You are a PC building expert. Select the best motherboard that's compatible with the chosen CPU. Return only valid JSON."},
-                {"role": "user", "content": mb_prompt}
-            ]
-        )
-        chosen_mb = parse_openai_response(mb_response)
-        print("Chosen Motherboard:", chosen_mb)
-
-        # Process RAM
-        ram_df = cleaner.clean_ram(chosen_cpu)
-        ram_prompt = f"""Given the following RAM options and the selected CPU/motherboard, select the best RAM:
-        Selected CPU: {chosen_cpu['name']}
-        Selected Motherboard: {chosen_mb['name']}
-        Budget: ${budget}
-        Priorities: {', '.join(priorities)}
-
-        Available RAM:
-        {ram_df.to_string()}
-
-        Select the best RAM and explain why it's the best choice for the user's needs. Return a JSON object with the following structure:
-        {{
-            "name": "exact RAM name",
-            "price": price,
-            "explanation": "brief explanation of why this RAM is best for the user"
-        }}"""
-        ram_response = openai.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[
-                {"role": "system", "content": "You are a PC building expert. Select the best RAM that's compatible with the chosen CPU and motherboard. Return only valid JSON."},
-                {"role": "user", "content": ram_prompt}
-            ]
-        )
-        chosen_ram = parse_openai_response(ram_response)
-        print("Chosen RAM:", chosen_ram)
-
-        # Process GPU
-        gpu_df = cleaner.clean_gpu()
-        gpu_prompt = f"""Given the following GPU options and user requirements, select the best GPU:
-        Budget: ${budget}
-        Priorities: {', '.join(priorities)}
-        Games to play: {', '.join(data.get('wantToPlayGames', []))}
-        Current games: {', '.join(data.get('currentlyPlayingGames', []))}
-
-        Available GPUs:
-        {gpu_df.to_string()}
-
-        Select the best GPU and explain why it's the best choice for the user's needs. Return a JSON object with the following structure:
-        {{
-            "name": "exact GPU name",
-            "price": price,
-            "explanation": "brief explanation of why this GPU is best for the user"
-        }}"""
-        gpu_response = openai.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[
-                {"role": "system", "content": "You are a PC building expert. Select the best GPU based on the user's gaming needs and budget. Return only valid JSON."},
-                {"role": "user", "content": gpu_prompt}
-            ]
-        )
-        chosen_gpu = parse_openai_response(gpu_response)
-        print("Chosen GPU:", chosen_gpu)
-
-        # Process Case
-        case_df = cleaner.clean_case(chosen_gpu)
-        case_prompt = f"""Given the following case options and the selected GPU, select the best case:
-        Selected GPU: {chosen_gpu['name']}
-        Budget: ${budget}
-        Priorities: {', '.join(priorities)}
-
-        Available Cases:
-        {case_df.to_string()}
-
-        Select the best case and explain why it's the best choice for the user's needs. Return a JSON object with the following structure:
-        {{
-            "name": "exact case name",
-            "price": price,
-            "explanation": "brief explanation of why this case is best for the user"
-        }}"""
-        case_response = openai.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[
-                {"role": "system", "content": "You are a PC building expert. Select the best case that can accommodate the chosen GPU. Return only valid JSON."},
-                {"role": "user", "content": case_prompt}
-            ]
-        )
-        chosen_case = parse_openai_response(case_response)
-        print("Chosen Case:", chosen_case)
-
-        # Process PSU
-        psu_df = cleaner.clean_psu(chosen_gpu, chosen_case)
-        psu_prompt = f"""Given the following PSU options and the selected components, select the best PSU:
-        Selected GPU: {chosen_gpu['name']}
-        Selected Case: {chosen_case['name']}
-        Budget: ${budget}
-        Priorities: {', '.join(priorities)}
-
-        Available PSUs:
-        {psu_df.to_string()}
-
-        Select the best PSU and explain why it's the best choice for the user's needs. Return a JSON object with the following structure:
-        {{
-            "name": "exact PSU name",
-            "price": price,
-            "explanation": "brief explanation of why this PSU is best for the user"
-        }}"""
-        psu_response = openai.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[
-                {"role": "system", "content": "You are a PC building expert. Select the best PSU that can power all the chosen components. Return only valid JSON."},
-                {"role": "user", "content": psu_prompt}
-            ]
-        )
-        chosen_psu = parse_openai_response(psu_response)
-        print("Chosen PSU:", chosen_psu)
-
-        # Process CPU Cooler
-        cooler_df = cleaner.clean_cpu_cooler()
-        cooler_prompt = f"""Given the following CPU cooler options and the selected CPU, select the best cooler:
-        Selected CPU: {chosen_cpu['name']}
-        Budget: ${budget}
-        Priorities: {', '.join(priorities)}
-
-        Available CPU Coolers:
-        {cooler_df.to_string()}
-
-        Select the best CPU cooler and explain why it's the best choice for the user's needs. Return a JSON object with the following structure:
-        {{
-            "name": "exact cooler name",
-            "price": price,
-            "explanation": "brief explanation of why this cooler is best for the user"
-        }}"""
-        cooler_response = openai.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[
-                {"role": "system", "content": "You are a PC building expert. Select the best CPU cooler for the chosen CPU. Return only valid JSON."},
-                {"role": "user", "content": cooler_prompt}
-            ]
-        )
-        chosen_cooler = parse_openai_response(cooler_response)
-        print("Chosen Cooler:", chosen_cooler)
-
-        # Process Storage
-        storage_df = cleaner.clean_storage()
-        storage_prompt = f"""Given the following storage options and user requirements, select the best storage:
-        Budget: ${budget}
-        Priorities: {', '.join(priorities)}
-        Games to play: {', '.join(data.get('wantToPlayGames', []))}
-        Current games: {', '.join(data.get('currentlyPlayingGames', []))}
-
-        Available Storage:
-        {storage_df.to_string()}
-
-        Select the best storage and explain why it's the best choice for the user's needs. Return a JSON object with the following structure:
-        {{
-            "name": "exact storage name",
-            "price": price,
-            "explanation": "brief explanation of why this storage is best for the user"
-        }}"""
-        storage_response = openai.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[
-                {"role": "system", "content": "You are a PC building expert. Select the best storage based on the user's needs and budget. Return only valid JSON."},
-                {"role": "user", "content": storage_prompt}
-            ]
-        )
-        chosen_storage = parse_openai_response(storage_response)
-        print("Chosen Storage:", chosen_storage)
-
+        
+        build = parse_openai_response(response)
+        
         # Calculate total cost
         total_cost = round(sum([
-            chosen_cpu['price'],
-            chosen_mb['price'],
-            chosen_ram['price'],
-            chosen_gpu['price'],
-            chosen_case['price'],
-            chosen_psu['price'],
-            chosen_cooler['price'],
-            chosen_storage['price']
+            build['cpu']['price'],
+            build['gpu']['price'],
+            build['motherboard']['price'],
+            build['ram']['price'],
+            build['storage']['price'],
+            build['case']['price'],
+            build['cpu_cooler']['price'],
+            build['psu']['price']
         ]), 2)
-        # Create final recommendation
+
+        # Format final recommendation
         recommendation = {
-            "motherboard": chosen_mb['name'],
-            "cpu": chosen_cpu['name'],
-            "memory": chosen_ram['name'],
-            "storage": chosen_storage['name'],
-            "gpu": chosen_gpu['name'],
-            "case": chosen_case['name'],
-            "cpu_cooler": chosen_cooler['name'],
-            "case_fans": "Included with case",  # Default value
-            "psu": chosen_psu['name'],
+            "cpu": build['cpu']['name'],
+            "gpu": build['gpu']['name'],
+            "motherboard": build['motherboard']['name'],
+            "memory": build['ram']['name'],
+            "storage": build['storage']['name'],
+            "case": build['case']['name'],
+            "cpu_cooler": build['cpu_cooler']['name'],
+            "case_fans": "Included with case",
+            "psu": build['psu']['name'],
             "total_cost": total_cost,
-            "explanation": f"""Here's your perfect PC build:
-
-CPU: {chosen_cpu['explanation'].split('.')[0]}.
-Motherboard: {chosen_mb['explanation'].split('.')[0]}.
-RAM: {chosen_ram['explanation'].split('.')[0]}.
-Storage: {chosen_storage['explanation'].split('.')[0]}.
-GPU: {chosen_gpu['explanation'].split('.')[0]}.
-Case: {chosen_case['explanation'].split('.')[0]}.
-CPU Cooler: {chosen_cooler['explanation'].split('.')[0]}.
-Power Supply: {chosen_psu['explanation'].split('.')[0]}.
-
-Total Cost: ${total_cost}
-"""
+            "explanation": build['explanation']
         }
 
         return jsonify(recommendation), 200
@@ -321,10 +220,10 @@ Total Cost: ${total_cost}
 @parts_api.route('/parts/<component_type>', methods=['GET'])
 def get_component(component_type):
     try:
-        parts_data = load_parts_data()
-        if component_type not in parts_data:
+        components = load_component_data()
+        if component_type not in components:
             return jsonify({'error': 'Invalid component type'}), 400
         
-        return jsonify(parts_data[component_type]), 200
+        return jsonify(components[component_type].to_dict('records')), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500 
