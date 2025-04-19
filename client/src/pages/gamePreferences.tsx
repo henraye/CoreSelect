@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { usePCStore } from "../store";
+import { motion, AnimatePresence } from "framer-motion";
 
 const MAX_GAMES = 3;
 
@@ -56,99 +57,117 @@ export default function GamePreferences() {
 
   return (
     <div className="space-y-8">
-      <h2 className="text-2xl font-bold">Gaming Preferences</h2>
-      <p className="text-gray-600">Since gaming is one of your top priorities, let us know about your gaming habits</p>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="space-y-4"
+      >
+        <h2 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+          Gaming Preferences
+        </h2>
+        <p className="text-lg text-gray-600">Since gaming is one of your top priorities, let us know about your gaming habits</p>
+      </motion.div>
 
-      {/* Games Want to Play */}
-      <div className="space-y-4">
-        <h3 className="text-lg font-semibold">Games You Want to Play</h3>
+      {/* Games Want to Play Section */}
+      <div className="bg-white rounded-xl shadow-sm p-6 space-y-4">
+        <h3 className="text-xl font-semibold">Games You Want to Play</h3>
         <div className="flex gap-2">
           <input
             type="text"
             value={wantToPlay}
             onChange={(e) => setWantToPlay(e.target.value)}
             placeholder="Enter a game title"
-            className="flex-1 p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+            className="flex-1 p-3 border-2 rounded-lg focus:ring-2 focus:ring-blue-500 transition-all"
             disabled={wantToPlayGames.length >= MAX_GAMES}
           />
-          <button
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             onClick={addWantToPlay}
             disabled={!wantToPlay || wantToPlayGames.length >= MAX_GAMES}
-            className="px-4 py-2 bg-blue-500 text-white rounded-lg disabled:opacity-50"
+            className="px-4 py-2 bg-blue-500 text-white rounded-lg disabled:opacity-50 hover:bg-blue-600"
           >
             Add
-          </button>
+          </motion.button>
         </div>
-        <div className="space-y-2">
+        <AnimatePresence>
           {wantToPlayGames.map((game, index) => (
-            <div
+            <motion.div
               key={game}
-              className="flex items-center gap-2 p-2 bg-gray-50 rounded-lg"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 20 }}
+              className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg"
             >
-              <span className="text-gray-500">{index + 1}.</span>
-              <span className="flex-1">{game}</span>
+              <span className="w-6 h-6 flex items-center justify-center bg-blue-100 rounded-full text-blue-600 text-sm">
+                {index + 1}
+              </span>
+              <span className="text-base">{game}</span>
               <button
                 onClick={() => removeWantToPlay(game)}
-                className="text-gray-500 hover:text-red-500"
+                className="text-gray-400 hover:text-red-500 transition-colors"
               >
                 ×
               </button>
-            </div>
+            </motion.div>
           ))}
-          {wantToPlayGames.length === MAX_GAMES && (
-            <p className="text-orange-500 text-sm">Maximum games reached</p>
-          )}
-        </div>
+        </AnimatePresence>
       </div>
 
-      {/* Currently Playing Games */}
-      <div className="space-y-4">
-        <h3 className="text-lg font-semibold">Games You Currently Play</h3>
+      {/* Currently Playing Games Section */}
+      <div className="bg-white rounded-xl shadow-sm p-6 space-y-4">
+        <h3 className="text-xl font-semibold">Games You Currently Play</h3>
         <div className="flex gap-2">
           <input
             type="text"
             value={currentlyPlaying}
             onChange={(e) => setCurrentlyPlaying(e.target.value)}
             placeholder="Enter a game title"
-            className="flex-1 p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+            className="flex-1 p-3 border-2 rounded-lg focus:ring-2 focus:ring-blue-500 transition-all"
             disabled={currentlyPlayingGames.length >= MAX_GAMES}
           />
-          <button
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             onClick={addCurrentlyPlaying}
             disabled={!currentlyPlaying || currentlyPlayingGames.length >= MAX_GAMES}
-            className="px-4 py-2 bg-blue-500 text-white rounded-lg disabled:opacity-50"
+            className="px-4 py-2 bg-blue-500 text-white rounded-lg disabled:opacity-50 hover:bg-blue-600"
           >
             Add
-          </button>
+          </motion.button>
         </div>
-        <div className="space-y-2">
+        <AnimatePresence>
           {currentlyPlayingGames.map((game, index) => (
-            <div
+            <motion.div
               key={game}
-              className="flex items-center gap-2 p-2 bg-gray-50 rounded-lg"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 20 }}
+              className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg"
             >
-              <span className="text-gray-500">{index + 1}.</span>
-              <span className="flex-1">{game}</span>
+              <span className="w-6 h-6 flex items-center justify-center bg-blue-100 rounded-full text-blue-600 text-sm">
+                {index + 1}
+              </span>
+              <span className="text-base">{game}</span>
               <button
                 onClick={() => removeCurrentlyPlaying(game)}
-                className="text-gray-500 hover:text-red-500"
+                className="text-gray-400 hover:text-red-500 transition-colors"
               >
                 ×
               </button>
-            </div>
+            </motion.div>
           ))}
-          {currentlyPlayingGames.length === MAX_GAMES && (
-            <p className="text-orange-500 text-sm">Maximum games reached</p>
-          )}
-        </div>
+        </AnimatePresence>
       </div>
 
-      <button
+      <motion.button
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
         onClick={handleNext}
-        className="px-4 py-2 bg-blue-500 text-white rounded-lg"
+        className="w-full px-4 py-3 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-lg hover:bg-blue-600 transition-all"
       >
         Next
-      </button>
+      </motion.button>
     </div>
   );
 } 

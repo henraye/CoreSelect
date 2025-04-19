@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { usePCStore } from "../store";
+import { motion, AnimatePresence } from "framer-motion";
 
 const availablePriorities = [
   "Gaming Performance",
@@ -69,19 +70,23 @@ export default function Priorities() {
   return (
     <div className="space-y-8">
       <div>
-        <h2 className="text-3xl font-bold mb-3">Select Your Priorities</h2>
-        <p className="text-gray-600 text-lg mb-8">Drag and drop up to 3 priorities in order of importance</p>
+        <h2 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+          Select Your Priorities
+        </h2>
+        <p className="text-lg text-gray-600">
+          Drag and drop up to {MAX_PRIORITIES} priorities in order of importance
+        </p>
       </div>
 
       {/* Available Priorities */}
       <div className="space-y-4">
-        <h3 className="text-2xl font-bold">Available Priorities</h3>
+        <h3 className="text-xl font-semibold">Available Priorities</h3>
         <div className="flex flex-wrap gap-3 pb-2">
           {wordBank.map((priority) => (
             <div
               key={priority}
               draggable={priorities.length < MAX_PRIORITIES}
-              onDragStart={(e) => handleDragStart(e, priority)}
+              onDragStart={(e: React.DragEvent) => handleDragStart(e, priority)}
               className={`
                 px-6 py-3 rounded-lg border-2 border-gray-300 bg-white
                 ${priorities.length < MAX_PRIORITIES 
@@ -100,10 +105,10 @@ export default function Priorities() {
         <div className="flex justify-between items-center">
           <h3 className="text-lg font-semibold">Your Priorities (in order)</h3>
           <span className="text-sm text-gray-500">
-            {priorities.length}/{MAX_PRIORITIES} selected
+            {priorities.length}/{MAX_PRIORITIES}
           </span>
         </div>
-        <div
+        <motion.div
           onDrop={handleDrop}
           onDragOver={handleDragOver}
           className={`
@@ -114,8 +119,10 @@ export default function Priorities() {
           `}
         >
           {priorities.map((priority, index) => (
-            <div
+            <motion.div
               key={priority}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
               className="flex items-center gap-3 p-3 bg-white border rounded-lg shadow-sm"
             >
               <span className="text-gray-500 font-medium">{index + 1}.</span>
@@ -126,7 +133,7 @@ export default function Priorities() {
               >
                 ×
               </button>
-            </div>
+            </motion.div>
           ))}
           {priorities.length === 0 && (
             <p className="text-gray-400 text-center py-4">Drag priorities here</p>
@@ -136,16 +143,18 @@ export default function Priorities() {
               Maximum priorities reached. Remove one to add another.
             </p>
           )}
-        </div>
+        </motion.div>
       </div>
 
-      <button
+      <motion.button
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
         onClick={handleNext}
         disabled={priorities.length === 0}
-        className="w-full mt-6 px-6 py-3 bg-blue-500 text-white rounded-lg disabled:opacity-50 hover:bg-blue-600 transition-colors"
+        className="w-full mt-6 px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-lg disabled:opacity-50 hover:bg-blue-600 transition-colors"
       >
         Next
-      </button>
+      </motion.button>
     </div>
   );
 } 
