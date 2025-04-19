@@ -2,140 +2,140 @@ from flask import Blueprint, jsonify, request
 import openai
 import os
 from dotenv import load_dotenv
-import requests
-from bs4 import BeautifulSoup
+import pandas as pd
+from pathlib import Path
 import json
-from datetime import datetime, timedelta
 
 load_dotenv()
 openai.api_key = os.getenv('OPENAI_API_KEY')
 
 parts_api = Blueprint('parts_api', __name__)
 
-# Store scraped data
-pc_parts_data = {
-    'cpus': [],
-    'gpus': [],
-    'motherboards': [],
-    'ram': [],
-    'storage': [],
-    'psus': [],
-    'cases': []
-}
-
-# Cache for recommendations
-recommendation_cache = {}
-CACHE_DURATION = timedelta(hours=1)
-
-def scrape_pc_parts():
-    try:
-        # Example scraping from Newegg (you'll need to adjust the URLs and selectors)
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-        }
-        
-        # Scrape CPUs
-        cpu_url = "https://www.newegg.com/Processors-Desktops/SubCategory/ID-343"
-        response = requests.get(cpu_url, headers=headers)
-        soup = BeautifulSoup(response.text, 'html.parser')
-        
-        # Example selector (you'll need to adjust based on actual website structure)
-        cpu_items = soup.select('.item-container')
-        for item in cpu_items[:10]:  # Limit to 10 items for example
-            try:
-                name = item.select_one('.item-title').text.strip()
-                price = item.select_one('.price-current').text.strip()
-                pc_parts_data['cpus'].append({
-                    'name': name,
-                    'price': price,
-                    'url': item.select_one('a')['href']
-                })
-            except Exception as e:
-                print(f"Error parsing CPU item: {e}")
-        
-        # Similar scraping for other components...
-        # You'll need to implement scraping for GPUs, motherboards, etc.
-        
-    except Exception as e:
-        print(f"Error scraping PC parts: {e}")
-
-def get_cached_recommendation(budget, cpu_pref, gpu_pref):
-    cache_key = f"{budget}_{cpu_pref}_{gpu_pref}"
-    if cache_key in recommendation_cache:
-        cached_data = recommendation_cache[cache_key]
-        if datetime.now() - cached_data['timestamp'] < CACHE_DURATION:
-            return cached_data['recommendation']
-    return None
-
-def cache_recommendation(budget, cpu_pref, gpu_pref, recommendation):
-    cache_key = f"{budget}_{cpu_pref}_{gpu_pref}"
-    recommendation_cache[cache_key] = {
-        'recommendation': recommendation,
-        'timestamp': datetime.now()
+def load_parts_data():
+    data_dir = Path('data')
+    parts_data = {}
+    
+    # List of part types and their corresponding CSV files
+    part_files = {
+        'motherboards': 'motherboards.csv',
+        'cpus': 'cpus.csv',
+        'memory': 'memory.csv',
+        'storage': 'storage.csv',
+        'gpus': 'gpus.csv',
+        'cases': 'cases.csv',
+        'cpu_coolers': 'cpu_coolers.csv',
+        'case_fans': 'case_fans.csv',
+        'psus': 'psus.csv'
     }
+    
+    # Load each CSV file into the parts_data dictionary
+    for part_type, filename in part_files.items():
+        file_path = data_dir / filename
+        if file_path.exists():
+            parts_data[part_type] = pd.read_csv(file_path).to_dict('records')
+        else:
+            print(f"Warning: {filename} not found in data directory")
+            parts_data[part_type] = []
+            
+    return parts_data
 
 @parts_api.route('/recommend', methods=['POST'])
 def get_recommendation():
     try:
         data = request.get_json()
         budget = data.get('budget')
-        cpu_preference = data.get('cpu_preference')
-        gpu_preference = data.get('gpu_preference')
+        priorities = data.get('priorities', [])
+        want_to_play_games = data.get('wantToPlayGames', [])
+        currently_playing_games = data.get('currentlyPlayingGames', [])
+
+        if not budget:
+            return jsonify({'error': 'Budget is required'}), 400
+
+        # Load parts data from CSV files
+        parts_data = load_parts_data()
         
-        if not all([budget, cpu_preference, gpu_preference]):
-            return jsonify({'error': 'Missing required parameters'}), 400
+        # Convert parts data to a format suitable for the OpenAI prompt
+        parts_context = ""
+        for part_type, parts in parts_data.items():
+            parts_context += f"\n{part_type.upper()} OPTIONS:\n"
+            for part in parts:
+                parts_context += str(part) + "\n"
 
-        # Check cache first
-        cached_recommendation = get_cached_recommendation(budget, cpu_preference, gpu_preference)
-        if cached_recommendation:
-            return jsonify({'recommendation': cached_recommendation}), 200
+        # Create the prompt for OpenAI
+        prompt = f"""Given the following user requirements and PC parts data, recommend the best PC build:
 
-        # Call OpenAI API for recommendations
-        response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
+Budget: ${budget}
+
+User Priorities (in order of importance):
+{chr(10).join(f"{i+1}. {priority}" for i, priority in enumerate(priorities))}
+
+Games they want to play:
+{chr(10).join(f"- {game}" for game in want_to_play_games)}
+
+Games they currently play:
+{chr(10).join(f"- {game}" for game in currently_playing_games)}
+
+Available PC Parts:
+{parts_context}
+
+Please recommend ONE specific part from each category that best matches the user's requirements while staying within their budget. Ensure compatibility between all parts. Format your response as a JSON object with the following structure:
+{{
+    "motherboard": "exact name from list",
+    "cpu": "exact name from list",
+    "memory": "exact name from list",
+    "storage": "exact name from list",
+    "gpu": "exact name from list",
+    "case": "exact name from list",
+    "cpu_cooler": "exact name from list",
+    "case_fans": "exact name from list",
+    "psu": "exact name from list",
+    "total_cost": total cost,
+    "explanation": "Brief explanation of why these parts were chosen based on the user's priorities and gaming preferences"
+}}"""
+
+        # Get recommendation from OpenAI
+        print("Sending request to OpenAI with prompt:", prompt)
+        response = openai.chat.completions.create(
+            model="gpt-4",
             messages=[
-                {"role": "system", "content": """You are a PC building expert. Recommend PC parts based on budget and preferences.
-                Consider the following in your recommendations:
-                1. CPU and GPU compatibility
-                2. Power supply requirements
-                3. Case size compatibility
-                4. RAM speed compatibility with motherboard
-                5. Storage options (SSD/HDD)
-                Format your response with clear sections for each component."""},
-                {"role": "user", "content": f"""Recommend a PC build with a budget of ${budget}.
-                CPU preference: {cpu_preference}
-                GPU preference: {gpu_preference}
-                Please provide specific part recommendations and explain your choices."""}
+                {"role": "system", "content": "You are a PC building expert. You must respond with ONLY a valid JSON object containing the recommended parts. The JSON must include: motherboard, cpu, memory, storage, gpu, case, cpu_cooler, case_fans, psu, total_cost, and explanation fields. Do not include any other text outside the JSON object."},
+                {"role": "user", "content": prompt}
             ]
         )
 
+        # Parse the response
         recommendation = response.choices[0].message.content
-        cache_recommendation(budget, cpu_preference, gpu_preference, recommendation)
-        return jsonify({'recommendation': recommendation}), 200
+        print("Received response from OpenAI:", recommendation)
+
+        try:
+            # Ensure the response is valid JSON before sending it back
+            parsed_recommendation = json.loads(recommendation)
+            
+            # Validate that all required fields are present
+            required_fields = ['motherboard', 'cpu', 'memory', 'storage', 'gpu', 'case', 'cpu_cooler', 'case_fans', 'psu', 'total_cost', 'explanation']
+            missing_fields = [field for field in required_fields if field not in parsed_recommendation]
+            
+            if missing_fields:
+                error_msg = f"Missing required fields in recommendation: {', '.join(missing_fields)}"
+                print(error_msg)
+                return jsonify({'error': error_msg}), 500
+                
+            return jsonify(parsed_recommendation), 200
+        except json.JSONDecodeError as e:
+            print("Failed to parse OpenAI response as JSON:", e)
+            return jsonify({'error': 'Invalid response format from AI service'}), 500
 
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
-@parts_api.route('/parts', methods=['GET'])
-def get_parts():
-    try:
-        # If data is empty, scrape it
-        if not any(pc_parts_data.values()):
-            scrape_pc_parts()
-        return jsonify(pc_parts_data), 200
-    except Exception as e:
+        print(f"Error in recommendation: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
 @parts_api.route('/parts/<component_type>', methods=['GET'])
 def get_component(component_type):
     try:
-        if component_type not in pc_parts_data:
+        parts_data = load_parts_data()
+        if component_type not in parts_data:
             return jsonify({'error': 'Invalid component type'}), 400
         
-        # If data is empty, scrape it
-        if not pc_parts_data[component_type]:
-            scrape_pc_parts()
-        
-        return jsonify(pc_parts_data[component_type]), 200
+        return jsonify(parts_data[component_type]), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500 

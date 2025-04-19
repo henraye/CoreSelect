@@ -1,132 +1,115 @@
 import { useState } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 import { usePCStore } from "../store";
 import { uri } from "../App";
 
-interface RecommendationResponse {
-  recommendation: string;
+interface PCRecommendation {
+  motherboard: string;
+  cpu: string;
+  memory: string;
+  storage: string;
+  gpu: string;
+  case: string;
+  cpuCooler: string;
+  caseFans: string;
+  psu: string;
 }
 
 export default function ReviewBuild() {
   const navigate = useNavigate();
-  const { 
-    budget, 
-    priorities, 
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  
+  const {
+    budget,
+    priorities,
     wantToPlayGames,
     currentlyPlayingGames,
-    markStepCompleted 
   } = usePCStore();
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string>("");
 
-  const hasGamingPreferences = priorities.slice(0, 3).includes("Gaming Performance");
-
-  const handleSubmit = async () => {
+  const handleGetRecommendation = async () => {
     setLoading(true);
-    setError("");
+    setError('');
 
     try {
       const response = await fetch(`${uri}/recommend`, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           budget,
           priorities,
-          gaming_preferences: hasGamingPreferences ? {
-            want_to_play: wantToPlayGames,
-            currently_playing: currentlyPlayingGames
-          } : undefined
+          wantToPlayGames,
+          currentlyPlayingGames,
         }),
       });
 
       if (!response.ok) {
-        throw new Error("Failed to get recommendation");
+        throw new Error('Failed to get recommendation');
       }
 
-      const data: RecommendationResponse = await response.json();
-      markStepCompleted(3);
       navigate('/results');
     } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred");
+      setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="space-y-6">
-      <h2 className="text-2xl font-bold">Review Your Selections</h2>
-      
-      {/* Budget Section */}
-      <div className="space-y-2">
-        <h3 className="text-lg font-semibold">Budget</h3>
-        <p className="p-3 bg-gray-50 rounded-lg">${budget}</p>
-      </div>
+    <div className="space-y-8">
+      <h1 className="text-3xl font-bold">Review Your Selections</h1>
 
-      {/* Priorities Section */}
-      <div className="space-y-2">
-        <h3 className="text-lg font-semibold">Your Priorities</h3>
-        <div className="space-y-2">
-          {priorities.map((priority, index) => (
-            <div key={priority} className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg">
-              <span className="text-gray-500">{index + 1}.</span>
-              <span>{priority}</span>
-            </div>
-          ))}
+      <div className="space-y-6">
+        <div>
+          <h2 className="text-xl font-semibold mb-2">Budget</h2>
+          <p className="text-lg">${budget}</p>
         </div>
-      </div>
 
-      {/* Gaming Preferences Section - Only show if gaming is a priority */}
-      {hasGamingPreferences && (
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold">Gaming Preferences</h3>
-          
-          {/* Games Want to Play */}
-          <div className="space-y-2">
-            <h4 className="font-medium text-gray-700">Games You Want to Play</h4>
-            <div className="space-y-2">
-              {wantToPlayGames.map((game, index) => (
-                <div key={game} className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg">
-                  <span className="text-gray-500">{index + 1}.</span>
-                  <span>{game}</span>
-                </div>
-              ))}
-              {wantToPlayGames.length === 0 && (
-                <p className="text-gray-500 italic">No games selected</p>
-              )}
+        <div>
+          <h2 className="text-xl font-semibold mb-2">Your Priorities</h2>
+          <ol className="list-decimal list-inside space-y-1">
+            {priorities.map((priority, index) => (
+              <li key={index} className="text-lg">{priority}</li>
+            ))}
+          </ol>
+        </div>
+
+        <div>
+          <h2 className="text-xl font-semibold mb-2">Gaming Preferences</h2>
+          <div className="space-y-4">
+            <div>
+              <h3 className="text-lg font-medium mb-1">Games You Want to Play</h3>
+              <ol className="list-decimal list-inside space-y-1">
+                {wantToPlayGames.map((game, index) => (
+                  <li key={index}>{game}</li>
+                ))}
+              </ol>
             </div>
-          </div>
 
-          {/* Currently Playing Games */}
-          <div className="space-y-2">
-            <h4 className="font-medium text-gray-700">Games You Currently Play</h4>
-            <div className="space-y-2">
-              {currentlyPlayingGames.map((game, index) => (
-                <div key={game} className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg">
-                  <span className="text-gray-500">{index + 1}.</span>
-                  <span>{game}</span>
-                </div>
-              ))}
-              {currentlyPlayingGames.length === 0 && (
-                <p className="text-gray-500 italic">No games selected</p>
-              )}
+            <div>
+              <h3 className="text-lg font-medium mb-1">Games You Currently Play</h3>
+              <ol className="list-decimal list-inside space-y-1">
+                {currentlyPlayingGames.map((game, index) => (
+                  <li key={index}>{game}</li>
+                ))}
+              </ol>
             </div>
           </div>
         </div>
-      )}
+      </div>
 
       {error && (
-        <div className="p-3 text-red-500 bg-red-50 rounded-lg">
+        <div className="p-4 bg-red-100 text-red-700 rounded-lg">
           {error}
         </div>
       )}
 
       <button
-        onClick={handleSubmit}
+        onClick={handleGetRecommendation}
         disabled={loading}
-        className="px-4 py-2 bg-blue-500 text-white rounded-lg disabled:opacity-50 w-full"
+        className="w-full py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50"
       >
         {loading ? 'Getting Recommendation...' : 'Get Recommendation'}
       </button>

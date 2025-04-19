@@ -1,0 +1,9 @@
+name,brand,cores,base_clock,boost_clock,tdp,price,performance_score
+Ryzen 7 7800X3D,AMD,8,4.2,5.0,120,449.99,95
+Ryzen 5 7600X,AMD,6,4.7,5.3,105,299.99,85
+Core i9-14900K,Intel,24,3.2,5.8,125,589.99,100
+Core i7-14700K,Intel,20,3.4,5.6,125,419.99,92
+Core i5-14600K,Intel,14,3.5,5.3,125,319.99,88
+Ryzen 9 7950X,AMD,16,4.5,5.7,170,699.99,98
+Core i5-13400F,Intel,10,2.5,4.6,65,209.99,75
+Ryzen 5 5600X,AMD,6,3.7,4.6,65,199.99,70 
