@@ -14,8 +14,8 @@
 A comprehensive way to find parts for your new PC powered with AI decisions!
 
 <div align="center">
-  <img src="https://imgur.com/Y37gJlH.png" align="center" alt="Display Sample 1" width="720"/></div><br>
-  <img src="https://imgur.com/GKV3hJ0.png" align="center" alt="Display Sample 2" width="720"/></div><br>
+  <img src="https://imgur.com/Y37gJlH.png" align="center" alt="Display Sample 1" width="720"/><br><br>
+  <img src="https://imgur.com/GKV3hJ0.png" align="center" alt="Display Sample 2" width="720"/><br>
 </div>
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
