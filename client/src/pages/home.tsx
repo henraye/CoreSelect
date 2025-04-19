@@ -1,72 +1,196 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { uri } from "../App";
+import Sidebar from "../components/Sidebar";
 
-//Used to specify the data of the Get Request from the backend
-interface GetRequest {
-  location: string;
-  message: string;
+interface RecommendationResponse {
+  recommendation: string;
 }
 
 function Home() {
-  // Counter is a variable. It is being initalized as 0 from the useState(). The <number> is a typescript typing to specify that counter can only be a number
-  // setCounter is a function that changes the value of counter. For example, setCounter(1738) will set the value counter to 1738. It always uses the convention set[variablename] in camelCase
-  // Use a useState whenever you want to change a variable within a page
-  // The typing <number> makes it so the interpreter complains if you try to set it to a string like setCounter('1738')
-  const [counter, setCounter] = useState<number>(0);
-  const [message, setMessage] = useState<string>("");
+  const [currentStep, setCurrentStep] = useState(1);
+  const [budget, setBudget] = useState<string>("");
+  const [cpuPreference, setCpuPreference] = useState<string>("");
+  const [gpuPreference, setGpuPreference] = useState<string>("");
+  const [recommendation, setRecommendation] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
 
-  //Whenever something is updated in the second parameter (the array), this hook will run. Right now its empty meaning it will only run once. We will use this to call data from the backend.
-  useEffect(() => {
-    //Lets call the data from the backend by initalizing the function
-    const getData = async () => {
-      try {
-        const res = await fetch(`${uri}/`, {
-          method: "GET",
-          headers: {
-            "Cache-Control": "no-cache",
-            Pragma: "no-cache",
-          },
-        }); //uri is imported from App.tsx
-        const toJson = (await res.json()) as GetRequest; //Convert the raw data to JSON, specifiying the data is to be returned as GetRequest
-        setMessage(toJson.message); //Finally, set the message, Because we set the type as GetRequest, we know that toJson will have a .message attribute
-      } catch (error) {
-        alert(error);
+  const handleSubmit = async () => {
+    setLoading(true);
+    setError("");
+    setRecommendation("");
+
+    try {
+      const response = await fetch(`${uri}/recommend`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          budget,
+          cpu_preference: cpuPreference,
+          gpu_preference: gpuPreference,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to get recommendation");
       }
-    };
-    getData();
-  }, []);
+
+      const data: RecommendationResponse = await response.json();
+      setRecommendation(data.recommendation);
+      setCurrentStep(5); // Move to results step
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "An error occurred");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleNext = () => {
+    if (currentStep < 5) {
+      setCurrentStep(currentStep + 1);
+    }
+    if (currentStep === 4) {
+      handleSubmit();
+    }
+  };
+
+  const renderStepContent = () => {
+    switch (currentStep) {
+      case 1:
+        return (
+          <div className="space-y-4">
+            <h2 className="text-2xl font-bold">Set Your Budget</h2>
+            <p className="text-gray-600">How much would you like to spend on your PC build?</p>
+            <div>
+              <input
+                type="number"
+                value={budget}
+                onChange={(e) => setBudget(e.target.value)}
+                className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                placeholder="Enter your budget in USD"
+                required
+                min="0"
+              />
+            </div>
+            <button
+              onClick={handleNext}
+              disabled={!budget}
+              className="px-4 py-2 bg-blue-500 text-white rounded-lg disabled:opacity-50"
+            >
+              Next
+            </button>
+          </div>
+        );
+
+      case 2:
+        return (
+          <div className="space-y-4">
+            <h2 className="text-2xl font-bold">CPU Preference</h2>
+            <p className="text-gray-600">Select your preferred CPU manufacturer</p>
+            <div className="space-y-2">
+              <select
+                value={cpuPreference}
+                onChange={(e) => setCpuPreference(e.target.value)}
+                className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                required
+              >
+                <option value="">Select CPU Preference</option>
+                <option value="AMD">AMD</option>
+                <option value="Intel">Intel</option>
+                <option value="No Preference">No Preference</option>
+              </select>
+            </div>
+            <button
+              onClick={handleNext}
+              disabled={!cpuPreference}
+              className="px-4 py-2 bg-blue-500 text-white rounded-lg disabled:opacity-50"
+            >
+              Next
+            </button>
+          </div>
+        );
+
+      case 3:
+        return (
+          <div className="space-y-4">
+            <h2 className="text-2xl font-bold">GPU Preference</h2>
+            <p className="text-gray-600">Select your preferred GPU manufacturer</p>
+            <div className="space-y-2">
+              <select
+                value={gpuPreference}
+                onChange={(e) => setGpuPreference(e.target.value)}
+                className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                required
+              >
+                <option value="">Select GPU Preference</option>
+                <option value="AMD">AMD</option>
+                <option value="NVIDIA">NVIDIA</option>
+                <option value="Intel">Intel</option>
+                <option value="No Preference">No Preference</option>
+              </select>
+            </div>
+            <button
+              onClick={handleNext}
+              disabled={!gpuPreference}
+              className="px-4 py-2 bg-blue-500 text-white rounded-lg disabled:opacity-50"
+            >
+              Next
+            </button>
+          </div>
+        );
+
+      case 4:
+        return (
+          <div className="space-y-4">
+            <h2 className="text-2xl font-bold">Review Your Selections</h2>
+            <div className="space-y-2">
+              <p><strong>Budget:</strong> ${budget}</p>
+              <p><strong>CPU Preference:</strong> {cpuPreference}</p>
+              <p><strong>GPU Preference:</strong> {gpuPreference}</p>
+            </div>
+            <button
+              onClick={handleNext}
+              className="px-4 py-2 bg-blue-500 text-white rounded-lg"
+            >
+              Get Recommendation
+            </button>
+          </div>
+        );
+
+      case 5:
+        return (
+          <div className="space-y-4">
+            <h2 className="text-2xl font-bold">Your PC Build Recommendation</h2>
+            {loading && <p>Getting your recommendation...</p>}
+            {error && (
+              <div className="p-4 bg-red-100 text-red-700 rounded-lg">
+                {error}
+              </div>
+            )}
+            {recommendation && (
+              <div className="p-4 bg-gray-50 rounded-lg">
+                <p className="whitespace-pre-line">{recommendation}</p>
+              </div>
+            )}
+          </div>
+        );
+
+      default:
+        return null;
+    }
+  };
 
   return (
-    <>
-      {/* This CSS library is tailwind, utilizing inline classnames to set css values */}
-      <div className="flex h-screen w-screen bg-gradient-to-r from-[#2A7B9B] to-[#EDDD53] justify-center text-white">
-        <div className="flex flex-col items-center gap-4">
-          <h1 className="text-4xl mt-20 text-center">Broncohacks 2025!</h1>
-
-          {/* Images are held in public, no need to say /public it assumes it starts from that directory */}
-          <img
-            src="/BroncoHacksSquareLogo.png"
-            className="w-[20vw] h-auto rounded-full"
-          ></img>
-
-          {/* You can set js variables directly into an html element like this */}
-          <h2>Counter: {counter}</h2>
-
-          {/* You can also set js functions such as this useState directly in the element */}
-          <button
-            className="p-5 bg-black rounded-3xl"
-            onClick={() => {
-              setCounter(counter + 1);
-            }}
-          >
-            Update Counter
-          </button>
-
-          {/* We use the welcomeMessage && syntax to only show the next element IF welcomeMessage is defined / when the data from the backend is fully loaded (takes time to send the data over and isnt ready off the bat*/}
-          {message && <div>Message from the backend: {message}</div>}
+    <div className="flex min-h-screen bg-gray-100">
+      <Sidebar currentStep={currentStep} onStepChange={setCurrentStep} />
+      <div className="flex-1 p-8">
+        <div className="max-w-2xl mx-auto">
+          {renderStepContent()}
         </div>
       </div>
-    </>
+    </div>
   );
 }
 
