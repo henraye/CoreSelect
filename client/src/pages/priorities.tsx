@@ -13,6 +13,8 @@ const availablePriorities = [
   "Machine Learning"
 ];
 
+const MAX_PRIORITIES = 3;
+
 export default function Priorities() {
   const navigate = useNavigate();
   const { priorities, setPriorities, markStepCompleted } = usePCStore();
@@ -24,13 +26,18 @@ export default function Priorities() {
   }, [priorities]);
 
   const handleDragStart = (e: React.DragEvent, priority: string) => {
+    if (priorities.length >= MAX_PRIORITIES) {
+      e.preventDefault();
+      return;
+    }
     e.dataTransfer.setData("text/plain", priority);
   };
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
-    const priority = e.dataTransfer.getData("text/plain");
+    if (priorities.length >= MAX_PRIORITIES) return;
     
+    const priority = e.dataTransfer.getData("text/plain");
     if (!priorities.includes(priority)) {
       setPriorities([...priorities, priority]);
     }
@@ -38,6 +45,9 @@ export default function Priorities() {
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
+    if (priorities.length >= MAX_PRIORITIES) {
+      e.dataTransfer.dropEffect = "none";
+    }
   };
 
   const removePriority = (priority: string) => {
@@ -54,7 +64,7 @@ export default function Priorities() {
   return (
     <div className="space-y-6">
       <h2 className="text-2xl font-bold">Select Your Priorities</h2>
-      <p className="text-gray-600">Drag and drop your priorities in order of importance</p>
+      <p className="text-gray-600">Drag and drop up to {MAX_PRIORITIES} priorities in order of importance</p>
       
       {/* Word Bank */}
       <div className="space-y-2">
@@ -63,9 +73,14 @@ export default function Priorities() {
           {wordBank.map((priority) => (
             <div
               key={priority}
-              draggable
+              draggable={priorities.length < MAX_PRIORITIES}
               onDragStart={(e) => handleDragStart(e, priority)}
-              className="px-3 py-2 bg-white border rounded-lg cursor-move hover:bg-gray-100"
+              className={`
+                px-3 py-2 bg-white border rounded-lg
+                ${priorities.length < MAX_PRIORITIES 
+                  ? 'cursor-move hover:bg-gray-100' 
+                  : 'opacity-50 cursor-not-allowed'}
+              `}
             >
               {priority}
             </div>
@@ -75,11 +90,21 @@ export default function Priorities() {
 
       {/* Drop Zone */}
       <div className="space-y-2">
-        <h3 className="text-lg font-semibold">Your Priorities (in order)</h3>
+        <div className="flex justify-between items-center">
+          <h3 className="text-lg font-semibold">Your Priorities (in order)</h3>
+          <span className="text-sm text-gray-500">
+            {priorities.length}/{MAX_PRIORITIES} selected
+          </span>
+        </div>
         <div
           onDrop={handleDrop}
           onDragOver={handleDragOver}
-          className="p-4 bg-gray-50 rounded-lg min-h-[200px] space-y-2"
+          className={`
+            p-4 rounded-lg min-h-[200px] space-y-2 transition-all duration-200
+            ${priorities.length < MAX_PRIORITIES 
+              ? 'bg-gray-50 border-2 border-dashed border-gray-300' 
+              : 'bg-gray-100 border-2 border-gray-200'}
+          `}
         >
           {priorities.map((priority, index) => (
             <div
@@ -98,6 +123,11 @@ export default function Priorities() {
           ))}
           {priorities.length === 0 && (
             <p className="text-gray-400 text-center">Drag priorities here</p>
+          )}
+          {priorities.length >= MAX_PRIORITIES && (
+            <p className="text-orange-500 text-center font-medium">
+              Maximum priorities reached. Remove one to add another.
+            </p>
           )}
         </div>
       </div>
