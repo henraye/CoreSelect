@@ -1,51 +1,59 @@
 import { useState } from "react";
+import { useNavigate } from "react-router";
+import { usePCStore } from "../store";
+
+interface RecommendationResponse {
+  recommendation: string;
+}
 
 export default function Home() {
-  const [budget, setBudget] = useState(2000);
+  const navigate = useNavigate();
+  const { setBudget, markStepCompleted } = usePCStore();
+  const [budget, setLocalBudget] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
 
-  const handleBuild = () => {
-    if (budget < 300) {
-      alert("Please enter a budget of at least $300.");
-      return;
+  const handleNext = () => {
+    if (budget) {
+      setBudget(Number(budget));
+      markStepCompleted(1);
+      navigate('/priorities');
     }
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center bg-gradient-to-b from-gray-900 to-gray-800 px-4">
-      <div className="bg-gray-900 shadow-2xl rounded-2xl p-8 max-w-md w-full text-white">
-        <h1 className="text-3xl font-bold mb-2 text-center">The PC Builder</h1>
-        <p className="text-gray-400 mb-6 text-center">Enter your budget. Get a PC.</p>
-
-        <div className="flex items-center bg-gray-800 rounded-lg px-4 py-2 mb-4 focus-within:ring-2 focus-within:ring-indigo-500">
-          <span className="text-gray-400 mr-2">$</span>
-          <input
-            type="number"
-            value={budget}
-            onChange={(e) => setBudget(parseInt(e.target.value))}
-            className="bg-transparent outline-none w-full text-white placeholder-gray-500"
-            placeholder="Enter your budget"
-            min="300"
-          />
-        </div>
-
+    <div className="space-y-4">
+      <h2 className="text-2xl font-bold">Set Your Budget</h2>
+      <p className="text-gray-600">How much would you like to spend on your PC build?</p>
+      <div>
         <input
-          type="range"
-          min="300"
-          max="5000"
-          step="100"
+          type="number"
           value={budget}
-          onChange={(e) => setBudget(parseInt(e.target.value))}
-          className="w-full mb-4 accent-indigo-500"
+          onChange={(e) => setLocalBudget(e.target.value)}
+          className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+          placeholder="Enter your budget in USD"
+          required
+          min="0"
         />
-        <p className="text-sm text-center text-gray-400 mb-4">Current budget: ${budget}</p>
-
-        <button
-          onClick={handleBuild}
-          className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 rounded-lg transition duration-200"
-        >
-          Build!
-        </button>
       </div>
+      <button
+        onClick={handleNext}
+        disabled={!budget}
+        className="px-4 py-2 bg-blue-500 text-white rounded-lg disabled:opacity-50"
+      >
+        Next
+      </button>
+
+      <input
+        type="range"
+        min="300"
+        max="5000"
+        step="100"
+        value={budget}
+        onChange={(e) => setLocalBudget(e.target.value)}
+        className="w-full mb-4 accent-indigo-500"
+      />
+      <p className="text-sm text-center text-gray-400 mb-4">Current budget: ${budget}</p>
     </div>
   );
 }
