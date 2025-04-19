@@ -46,7 +46,7 @@ export default function Home() {
 
       <input
         type="range"
-        min="300"
+        min="600"
         max="5000"
         step="100"
         value={budget}
