@@ -3,23 +3,21 @@ import { useNavigate } from "react-router";
 import { usePCStore } from "../store";
 import { motion } from "framer-motion";
 
-interface RecommendationResponse {
-  recommendation: string;
-}
-
 export default function Home() {
   const navigate = useNavigate();
   const { setBudget, markStepCompleted } = usePCStore();
   const [budget, setLocalBudget] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
 
   const handleNext = () => {
-    if (budget) {
-      setBudget(Number(budget));
-      markStepCompleted(1);
-      navigate('/priorities');
+    const value = Number(budget);
+    if (value < 600 || value > 5000) {
+      setError("Budget must be between $600 and $5000");
+      return;
     }
+    setBudget(value);
+    markStepCompleted(1);
+    navigate('/priorities');
   };
 
   return (
@@ -46,12 +44,18 @@ export default function Home() {
           <input
             type="number"
             value={budget}
-            onChange={(e) => setLocalBudget(e.target.value)}
+            onChange={(e) => {
+              setLocalBudget(e.target.value);
+              setError("");
+            }}
             className="w-full p-3 text-base border-2 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
             placeholder="Enter your budget in USD"
             required
-            min="0"
           />
+
+          {error && (
+            <p className="text-red-500 text-sm">{error}</p>
+          )}
 
           <div className="space-y-2">
             <input
@@ -80,7 +84,7 @@ export default function Home() {
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
         onClick={handleNext}
-        disabled={!budget}
+        disabled={!budget || error !== ""}
         className="w-full px-4 py-3 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-lg 
                  disabled:opacity-50 hover:bg-blue-600 transition-all"
       >

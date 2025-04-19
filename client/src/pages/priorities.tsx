@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { usePCStore } from "../store";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
 const availablePriorities = [
   "Gaming Performance",
