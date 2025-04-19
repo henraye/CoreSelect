@@ -1,6 +1,4 @@
 import { Routes, Route } from "react-router";
-
-import Header from "./components/Header";
 import Home from "./pages/home";
 import Users from "./pages/users";
 
@@ -11,7 +9,6 @@ export const uri = "http://127.0.0.1:8000";
 function App() {
   return (
     <>
-      <Header />
       <Routes>
         <Route index element={<Home />} />
         <Route path="users" element={<Users />} />
