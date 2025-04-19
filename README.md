@@ -13,9 +13,9 @@
 
 A comprehensive way to find parts for your new PC powered with AI decisions!
 
-<div align="center">
-  <iframe width="560" height="315" src="https://www.youtube.com/embed/gC1CpHqYjE4?si=dsmGs0bHluQd3kBa" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-</div>
+[![Demo Video](https://img.youtube.com/vi/gC1CpHqYjE4/maxresdefault.jpg)](https://youtu.be/gC1CpHqYjE4)
+### [Watch the demo video here!](https://youtu.be/gC1CpHqYjE4)
+
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
