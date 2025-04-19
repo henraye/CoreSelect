@@ -28,6 +28,9 @@ def load_parts_data():
         'psus': 'psus.csv'
     }
     
+    #pd creeates a dataframe
+    #Future:import functions to filter parts by budget and priorities
+
     # Load each CSV file into the parts_data dictionary
     for part_type, filename in part_files.items():
         file_path = data_dir / filename
@@ -45,6 +48,7 @@ def get_recommendation():
         data = request.get_json()
         budget = data.get('budget')
         priorities = data.get('priorities', [])
+        #take budget and priorities and apply percentages for each part
         want_to_play_games = data.get('wantToPlayGames', [])
         currently_playing_games = data.get('currentlyPlayingGames', [])
 
@@ -62,12 +66,8 @@ def get_recommendation():
                 parts_context += str(part) + "\n"
 
         # Create the prompt for OpenAI
+        #Future: remove the budget and priorities and just use the parts data
         prompt = f"""Given the following user requirements and PC parts data, recommend the best PC build:
-
-Budget: ${budget}
-
-User Priorities (in order of importance):
-{chr(10).join(f"{i+1}. {priority}" for i, priority in enumerate(priorities))}
 
 Games they want to play:
 {chr(10).join(f"- {game}" for game in want_to_play_games)}
@@ -75,14 +75,10 @@ Games they want to play:
 Games they currently play:
 {chr(10).join(f"- {game}" for game in currently_playing_games)}
 
+
 Available PC Parts:
 {parts_context}
 
-IMPORTANT RULES:
-1. CPU and motherboard must be compatible (same socket type). For AMD CPUs, the socket must match to motherboard sockets, specifically AM4 or AM5. For Intel CPUs, the socket must match to motherboard sockets, specifically LGA 1200 or LGA 1700.
-2. RAM must match the motherboard's memory type (DDR4 or DDR5).
-3. Keep the explanation simple and beginner-friendly.
-4. Focus on explaining why each part is good for the user's needs.
 
 Please recommend ONE specific part from each category that best matches the user's requirements while staying within their budget. Format your response as a JSON object with the following structure:
 {{
@@ -102,14 +98,15 @@ Please recommend ONE specific part from each category that best matches the user
         # Get recommendation from OpenAI
         print("Sending request to OpenAI with prompt:", prompt)
         response = openai.chat.completions.create(
-            model="gpt-4",
+            model="gpt-4o-mini",
             messages=[
                 {"role": "system", "content": """You are a PC building expert who explains things simply. 
-                You must:
-                1. Ensure CPU and motherboard socket compatibility
-                2. Match RAM type (DDR4/DDR5) with motherboard
-                3. Keep explanations simple and beginner-friendly
-                4. Focus on what each part does and why it's good for the user
+                You must follow these rules:
+                IMPORTANT RULES:
+                1. CPU and motherboard must be compatible (same socket type). For AMD CPUs, the socket must match to motherboard sockets, specifically AM4 or AM5. For Intel CPUs, the socket must match to motherboard sockets, specifically LGA 1200 or LGA 1700.,
+                2. RAM must match the motherboard's memory type (DDR4 or DDR5).,
+                3. Keep the explanation simple and beginner-friendly.,
+                4. Focus on explaining why each part is good for the user's needs.
                 Respond with ONLY a valid JSON object containing the recommended parts."""},
                 {"role": "user", "content": prompt}
             ]
