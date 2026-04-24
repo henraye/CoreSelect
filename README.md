@@ -65,5 +65,7 @@ This project was created by:
 
 The team operated with high agility, pivoting between design, backend development, and AI integration to deliver a fully functional MVP within the 24-hour sprint.
 
+Placed 18th out of 61 total teams (~top 30%) in a highly competitive university hackathon environment.
+
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
