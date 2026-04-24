@@ -63,5 +63,7 @@ This project was created by:
 - [Henry Tran](https://github.com/Hraye)
 - [Ryan Wei](https://github.com/HoverfishOTS)
 
+The team operated with high agility, pivoting between design, backend development, and AI integration to deliver a fully functional MVP within the 24-hour sprint.
+
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
